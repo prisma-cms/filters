@@ -318,7 +318,7 @@ class FilterItem extends PrismaCmsComponent {
                 }}
                 setFilters={(name, value, index) => {
 
-                  console.log("FilterItem setFilters", name, value, index);
+                  console.log("FilterItem setFilters", filters, name, value, index);
 
                   // const {
                   //   onChange,

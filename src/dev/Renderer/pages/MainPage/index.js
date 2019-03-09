@@ -6,6 +6,10 @@ import Context from "@prisma-cms/context";
 import Filter from "./Filter";
 
 import Users from "./Filter/Users";
+import { TextField, IconButton } from 'material-ui';
+
+import CloseIcon from "material-ui-icons/Close";
+import { Typography } from 'material-ui';
 
 class MainPage extends Component {
 
@@ -24,20 +28,61 @@ class MainPage extends Component {
 
   state = {
     filters: {
-      // username: "Fi1osof",
-      username_contains: "test",
+      // // username: "Fi1osof",
+      // id_contains: "iddd",
+      // // username_contains: "test",
       // fullname_contains: "Ник",
-      CreatedBy: {
-        fullname_contains: "Nikol",
-      },
+      // id_in: [
+      //   // "123",
+      //   "435",
+      // ],
       // CreatedBy: {
-      //   username: "Fi1osof",
-      // },
-      // ProjectsCreated_some: {
-      //   CreatedBy: {
-      //     username: "Fi1osof",
+      //   fullname_contains: "Nikol",
+      //   id_not_in: [
+      //     "123",
+      //     // "435",
+      //   ],
+      //   ProjectsCreated_some: {
+      //     name: "fffe",
+      //     CreatedBy: {
+      //       username: "Fi1osof",
+      //       id_in: ["123", "435"],
+      //     },
       //   },
       // },
+
+      AND: [
+        {
+          CreatedBy: {
+            username: "Fi1osof",
+            id_in: [
+              "123",
+              "435",
+            ],
+          },
+        },
+        {
+          CreatedBy: {
+            username: "Fi1osof",
+            id_in: [
+              "123",
+              "435",
+            ],
+          },
+          id_in: [
+            "435",
+            "123",
+          ],
+        },
+      ],
+      CreatedBy: {
+        username: "Fi1osof",
+      },
+      ProjectsCreated_some: {
+        CreatedBy: {
+          username: "Fi1osof",
+        },
+      },
     },
   }
 
@@ -161,6 +206,281 @@ class MainPage extends Component {
   // }
 
 
+  renderFilters(filters, setFilters, deleteItem) {
+
+    const {
+      Grid,
+    } = this.context;
+
+    if (!filters) {
+      return null;
+    }
+
+    let inputs = [];
+
+    const names = Object.keys(filters);
+    const values = Object.values(filters);
+
+
+    names.map((name, index) => {
+
+      const newName = name;
+
+      // const value = filters[name];
+      const value = values[index];
+
+      let input;
+
+      console.log("input value", name, value);
+
+      if (value && Array.isArray(value)) {
+
+        let fields = [];
+
+        value.map((n, index) => {
+
+          fields.push(this.renderFilters(
+            {
+              [`${name} (${index + 1})`]: n,
+            },
+            (newFilters) => {
+
+              let values = [...value];
+
+              values[index] = Object.values(newFilters)[0];
+
+
+              const NewFilters = Object.assign({ ...filters }, {
+                [name]: values,
+              })
+
+              setFilters(NewFilters);
+
+            },
+            event => {
+
+              // let newFilters = { ...filters };
+
+              // delete newFilters[name];
+
+              // setFilters(newFilters);
+
+              let values = [...value];
+
+              values.splice(index, 1);
+
+
+              let newFilters = { ...filters };
+
+              newFilters[name] = values;
+
+              setFilters(newFilters);
+
+            }
+          ));
+
+        });
+
+
+        input = <Grid
+          key={index}
+          container
+          spacing={8}
+        >
+
+          <Grid
+            item
+            style={{
+              border: "1px solid grey",
+            }}
+          >
+            <Typography
+              variant="subheading"
+            >
+              {name}
+            </Typography>
+
+            {fields}
+
+          </Grid>
+
+          <Grid
+            item
+          >
+            <IconButton
+              onClick={deleteItem ? deleteItem : event => {
+
+                let newFilters = { ...filters };
+
+                delete newFilters[name];
+
+                setFilters(newFilters);
+
+              }}
+            // onClick={deleteItem}
+            >
+              <CloseIcon
+
+              />
+            </IconButton>
+          </Grid>
+
+        </Grid>
+
+      }
+      else if (value && value instanceof Object) {
+
+        const field = this.renderFilters(value, (newFilters) => {
+
+          const NewFilters = Object.assign({ ...filters }, {
+            [name]: newFilters,
+          })
+
+          setFilters(NewFilters);
+
+        });
+
+        input = <Grid
+          key={index}
+          container
+          spacing={8}
+        >
+
+          <Grid
+            item
+            style={{
+              border: "1px solid grey",
+            }}
+          >
+            <Typography
+              variant="subheading"
+            >
+              {name}
+            </Typography>
+
+            {field}
+          </Grid>
+
+          <Grid
+            item
+          >
+            <IconButton
+              onClick={deleteItem ? deleteItem : event => {
+
+                let newFilters = { ...filters };
+
+                delete newFilters[name];
+
+                setFilters(newFilters);
+
+              }}
+            // onClick={deleteItem}
+            >
+              <CloseIcon
+
+              />
+            </IconButton>
+          </Grid>
+
+        </Grid>
+
+      }
+      else {
+
+        const field = <TextField
+          name={name}
+          label={name}
+          value={value || ""}
+          onChange={event => {
+
+            const {
+              name,
+              value,
+            } = event.target;
+
+            setFilters(Object.assign({ ...filters }, {
+              [name]: value,
+            }));
+
+          }}
+        />
+
+
+        input = <Grid
+          key={index}
+          container
+          spacing={8}
+        >
+
+          <Grid
+            item
+          >
+            {field}
+          </Grid>
+
+          <Grid
+            item
+          >
+            <IconButton
+              onClick={deleteItem ? deleteItem : event => {
+
+                let newFilters = { ...filters };
+
+                delete newFilters[name];
+
+                setFilters(newFilters);
+
+              }}
+            // onClick={deleteItem}
+            >
+              <CloseIcon
+
+              />
+            </IconButton>
+          </Grid>
+
+        </Grid>
+
+      }
+
+
+      if (input) {
+        inputs.push(input);
+      }
+
+    });
+
+    return inputs;
+
+    // return <Grid
+    //   container
+    //   spacing={8}
+    // >
+
+    //   <Grid
+    //     item
+    //   >
+    //     {inputs}
+    //   </Grid>
+
+    //   <Grid
+    //     item
+    //   >
+    //     <IconButton
+    //       onClick={event => {
+
+    //       }}
+    //     >
+    //       <CloseIcon
+
+    //       />
+    //     </IconButton>
+    //   </Grid>
+
+    // </Grid>;
+  }
+
+
   render() {
 
     const {
@@ -266,7 +586,7 @@ class MainPage extends Component {
         xs={12}
       >
 
-        <Filter
+        {/* <Filter
           types={types}
           filters={filters}
           onChange={this.onNameChange}
@@ -275,7 +595,16 @@ class MainPage extends Component {
           // queryName="users"
           // whereType="where"
           inputFields={inputFields}
-        />
+        /> */}
+
+        {this.renderFilters(filters, filters => {
+
+          console.log("renderFilters 1 filters", filters);
+
+          this.setState({
+            filters,
+          });
+        })}
 
       </Grid>
 
@@ -284,7 +613,13 @@ class MainPage extends Component {
         xs={12}
       >
 
-        {filters ? JSON.stringify(filters, true) : null}
+        <div
+          style={{
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          {filters ? JSON.stringify(filters, null, 2) : null}
+        </div>
 
       </Grid>
 
