@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 import Context from "@prisma-cms/context";
@@ -28,61 +28,61 @@ class MainPage extends Component {
 
   state = {
     filters: {
-      // // username: "Fi1osof",
-      // id_contains: "iddd",
+      username: "Fi1osof",
+      id_contains: "iddd",
       // // username_contains: "test",
       // fullname_contains: "Ник",
       // id_in: [
       //   // "123",
       //   "435",
       // ],
-      // CreatedBy: {
-      //   fullname_contains: "Nikol",
-      //   id_not_in: [
-      //     "123",
-      //     // "435",
-      //   ],
-      //   ProjectsCreated_some: {
-      //     name: "fffe",
+      CreatedBy: {
+        fullname_contains: "Nikol",
+        id_not_in: [
+          "123",
+          // "435",
+        ],
+        ProjectsCreated_some: {
+          name: "fffe",
+          CreatedBy: {
+            username: "Fi1osof",
+            id_in: ["123", "435"],
+          },
+        },
+      },
+
+      // AND: [
+      //   {
       //     CreatedBy: {
       //       username: "Fi1osof",
-      //       id_in: ["123", "435"],
+      //       id_in: [
+      //         "123",
+      //         "435",
+      //       ],
       //     },
       //   },
+      //   {
+      //     CreatedBy: {
+      //       username: "Fi1osof",
+      //       id_in: [
+      //         "123",
+      //         "435",
+      //       ],
+      //     },
+      //     id_in: [
+      //       "435",
+      //       "123",
+      //     ],
+      //   },
+      // ],
+      // CreatedBy: {
+      //   username: "Fi1osof",
       // },
-
-      AND: [
-        {
-          CreatedBy: {
-            username: "Fi1osof",
-            id_in: [
-              "123",
-              "435",
-            ],
-          },
-        },
-        {
-          CreatedBy: {
-            username: "Fi1osof",
-            id_in: [
-              "123",
-              "435",
-            ],
-          },
-          id_in: [
-            "435",
-            "123",
-          ],
-        },
-      ],
-      CreatedBy: {
-        username: "Fi1osof",
-      },
-      ProjectsCreated_some: {
-        CreatedBy: {
-          username: "Fi1osof",
-        },
-      },
+      // ProjectsCreated_some: {
+      //   CreatedBy: {
+      //     username: "Fi1osof",
+      //   },
+      // },
     },
   }
 
@@ -206,7 +206,70 @@ class MainPage extends Component {
   // }
 
 
-  renderFilters(filters, setFilters, deleteItem) {
+  renderInputBlock(field, name, key, filters, setFilters, deleteItem, title) {
+
+    // console.log("renderInputBlock key", key);
+
+    const {
+      Grid,
+    } = this.context;
+
+    // return <Grid
+    //   key={key}
+    //   container
+    //   spacing={8}
+    //   style={{
+    //     border: "1px solid grey",
+    //   }}
+    // >
+
+    return <Fragment
+      key={key}
+    >
+
+      <Grid
+        item
+      >
+
+        {title ?
+          <Typography
+            variant="subheading"
+          >
+            {title}
+          </Typography>
+          : null
+        }
+
+        {field}
+      </Grid>
+
+      <Grid
+        item
+      >
+        <IconButton
+          onClick={deleteItem ? deleteItem : event => {
+
+            let newFilters = { ...filters };
+
+            delete newFilters[name];
+
+            setFilters(newFilters);
+
+          }}
+        // onClick={deleteItem}
+        >
+          <CloseIcon
+
+          />
+        </IconButton>
+      </Grid>
+    </Fragment>
+
+    {/* </Grid> */ }
+  }
+
+
+  renderFilters(filters, setFilters, deleteItem, props) {
 
     const {
       Grid,
@@ -215,6 +278,11 @@ class MainPage extends Component {
     if (!filters) {
       return null;
     }
+
+    const {
+      style,
+      ...other
+    } = props || {};
 
     let inputs = [];
 
@@ -231,7 +299,7 @@ class MainPage extends Component {
 
       let input;
 
-      console.log("input value", name, value);
+      // console.log("input value", name, value);
 
       if (value && Array.isArray(value)) {
 
@@ -239,9 +307,11 @@ class MainPage extends Component {
 
         value.map((n, index) => {
 
+          const fieldName = `${name} (${index + 1})`;
+
           fields.push(this.renderFilters(
             {
-              [`${name} (${index + 1})`]: n,
+              [fieldName]: n,
             },
             (newFilters) => {
 
@@ -276,56 +346,61 @@ class MainPage extends Component {
 
               setFilters(newFilters);
 
+            },
+            {
+              key: fieldName,
             }
           ));
 
         });
 
 
-        input = <Grid
-          key={index}
-          container
-          spacing={8}
-        >
+        // input = <Grid
+        //   key={index}
+        //   container
+        //   spacing={8}
+        // >
 
-          <Grid
-            item
-            style={{
-              border: "1px solid grey",
-            }}
-          >
-            <Typography
-              variant="subheading"
-            >
-              {name}
-            </Typography>
+        //   <Grid
+        //     item
+        //     style={{
+        //       border: "1px solid grey",
+        //     }}
+        //   >
+        //     <Typography
+        //       variant="subheading"
+        //     >
+        //       {name}
+        //     </Typography>
 
-            {fields}
+        //     {fields}
 
-          </Grid>
+        //   </Grid>
 
-          <Grid
-            item
-          >
-            <IconButton
-              onClick={deleteItem ? deleteItem : event => {
+        //   <Grid
+        //     item
+        //   >
+        //     <IconButton
+        //       onClick={deleteItem ? deleteItem : event => {
 
-                let newFilters = { ...filters };
+        //         let newFilters = { ...filters };
 
-                delete newFilters[name];
+        //         delete newFilters[name];
 
-                setFilters(newFilters);
+        //         setFilters(newFilters);
 
-              }}
-            // onClick={deleteItem}
-            >
-              <CloseIcon
+        //       }}
+        //     // onClick={deleteItem}
+        //     >
+        //       <CloseIcon
 
-              />
-            </IconButton>
-          </Grid>
+        //       />
+        //     </IconButton>
+        //   </Grid>
 
-        </Grid>
+        // </Grid>
+
+        input = this.renderInputBlock(fields, name, index, filters, setFilters, deleteItem, name);
 
       }
       else if (value && value instanceof Object) {
@@ -340,49 +415,64 @@ class MainPage extends Component {
 
         });
 
+        // input = <Grid
+        //   key={index}
+        //   container
+        //   spacing={8}
+        // >
+
+        //   <Grid
+        //     item
+        //     style={{
+        //       border: "1px solid grey",
+        //     }}
+        //   >
+        //     <Typography
+        //       variant="subheading"
+        //     >
+        //       {name}
+        //     </Typography>
+
+        //     {field}
+        //   </Grid>
+
+        //   <Grid
+        //     item
+        //   >
+        //     <IconButton
+        //       onClick={deleteItem ? deleteItem : event => {
+
+        //         let newFilters = { ...filters };
+
+        //         delete newFilters[name];
+
+        //         setFilters(newFilters);
+
+        //       }}
+        //     // onClick={deleteItem}
+        //     >
+        //       <CloseIcon
+
+        //       />
+        //     </IconButton>
+        //   </Grid>
+
+        // </Grid>
+
         input = <Grid
           key={index}
-          container
-          spacing={8}
+          item
         >
-
           <Grid
-            item
+            container
+            spacing={8}
             style={{
               border: "1px solid grey",
             }}
           >
-            <Typography
-              variant="subheading"
-            >
-              {name}
-            </Typography>
-
-            {field}
+            {this.renderInputBlock(field, name, index, filters, setFilters, deleteItem, name)}
           </Grid>
-
-          <Grid
-            item
-          >
-            <IconButton
-              onClick={deleteItem ? deleteItem : event => {
-
-                let newFilters = { ...filters };
-
-                delete newFilters[name];
-
-                setFilters(newFilters);
-
-              }}
-            // onClick={deleteItem}
-            >
-              <CloseIcon
-
-              />
-            </IconButton>
-          </Grid>
-
-        </Grid>
+        </Grid>;
 
       }
       else {
@@ -406,40 +496,43 @@ class MainPage extends Component {
         />
 
 
-        input = <Grid
-          key={index}
-          container
-          spacing={8}
-        >
+        // input = <Grid
+        //   key={index}
+        //   container
+        //   spacing={8}
+        // >
 
-          <Grid
-            item
-          >
-            {field}
-          </Grid>
+        //   <Grid
+        //     item
+        //   >
+        //     {field}
+        //   </Grid>
 
-          <Grid
-            item
-          >
-            <IconButton
-              onClick={deleteItem ? deleteItem : event => {
+        //   <Grid
+        //     item
+        //   >
+        //     <IconButton
+        //       onClick={deleteItem ? deleteItem : event => {
 
-                let newFilters = { ...filters };
+        //         let newFilters = { ...filters };
 
-                delete newFilters[name];
+        //         delete newFilters[name];
 
-                setFilters(newFilters);
+        //         setFilters(newFilters);
 
-              }}
-            // onClick={deleteItem}
-            >
-              <CloseIcon
+        //       }}
+        //     // onClick={deleteItem}
+        //     >
+        //       <CloseIcon
 
-              />
-            </IconButton>
-          </Grid>
+        //       />
+        //     </IconButton>
+        //   </Grid>
 
-        </Grid>
+        // </Grid>
+
+
+        input = this.renderInputBlock(field, name, index, filters, setFilters, deleteItem);
 
       }
 
@@ -450,7 +543,21 @@ class MainPage extends Component {
 
     });
 
-    return inputs;
+    // return inputs;
+
+    return <Grid
+      container
+      spacing={8}
+      style={{
+        overflow: "auto",
+        ...style,
+      }}
+      {...other}
+    >
+
+      {inputs}
+
+    </Grid>;
 
     // return <Grid
     //   container
