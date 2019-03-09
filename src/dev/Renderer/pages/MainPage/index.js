@@ -1,78 +1,184 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-// import Context from "@prisma-cms/context";
-import PrismaCmsComponent from "@prisma-cms/component";
+import Context from "@prisma-cms/context";
 
-import {
-  Query,
-} from "react-apollo";
+import Filter from "./Filter";
 
-import Filters from "../../../../App";
-import gql from 'graphql-tag';
-import { TextField } from 'material-ui';
+import Users from "./Filter/Users";
 
-import FilterItem from "./item";
-import Users from "./Users";
+class MainPage extends Component {
 
-class MainPage extends PrismaCmsComponent {
+  static contextType = Context;
 
-  // static contextType = Context;
 
-  // static propTypes = {
-  //   // type: PropTypes.string.isRequired,
-  // };
+  static propTypes = {
+    queryName: PropTypes.string.isRequired,
+    whereType: PropTypes.string.isRequired,
+  };
 
-  // static defaultProps = {
-  //   // type: "User",
-  // };
-
+  static defaultProps = {
+    queryName: "users",
+    whereType: "where",
+  };
 
   state = {
-    ...super.state,
     filters: {
-      AND: [
-        {
-          id_in: [
-            "cjp2dj1d701vq0960ikvuumbz",
-            "cjt0j077700vo09602jmy6ntd",
-          ],
-        },
-        {
-          username: "Fi1osof",
-        }
-        // {},
-      ],
+      // username: "Fi1osof",
+      username_contains: "test",
+      // fullname_contains: "Ник",
+      CreatedBy: {
+        fullname_contains: "Nikol",
+      },
+      // CreatedBy: {
+      //   username: "Fi1osof",
+      // },
+      // ProjectsCreated_some: {
+      //   CreatedBy: {
+      //     username: "Fi1osof",
+      //   },
+      // },
     },
   }
 
-  // constructor(props){
 
-  //   super(props);
+  /**
+   * Устанавливаем новые фильтры
+   */
+  setFilters = (filters) => {
 
-  //   this.state = {
+    this.setState({
+      filters,
+    });
+  }
 
-  //   }
+
+  /**
+   * Меняется имя элемента
+   */
+  onNameChange = (name, value, index) => {
+
+    // console.log("onChange filter", name, value);
+
+    const {
+      filters,
+    } = this.state;
+
+    const names = Object.keys(filters);
+
+    /**
+    При изменении меняется и положение активного элемента.
+    Надо предыдущий элемент удалить, а вместо него поставить другой объект
+     */
+
+    let newFilters = { ...filters }
+
+    if (index !== undefined) {
+      delete newFilters[names[index]];
+    }
+
+
+    if (value !== undefined) {
+      newFilters[name] = value;
+    }
+
+
+    this.setFilters(newFilters);
+
+  }
+
+
+  /**
+   * Меняется значение элемента
+   */
+  onValueChange = (filters, item) => {
+
+    console.log("onValueChange onChange filters", filters);
+    console.log("onValueChange onChange item", item);
+
+    return;
+
+    // const {
+    //   filters,
+    // } = this.state;
+
+    // AND = [...AND]
+
+
+
+
+    // AND[index] = item;
+
+    // this.setState({
+    //   filters: {
+    //     AND,
+    //   },
+    // });
+
+    let newFilters = { ...filters }
+
+    // newFilters[name]
+
+    Object.assign(newFilters, { ...item });
+
+    this.setState({
+      filters: newFilters,
+    });
+
+  }
+
+  // onValueChange = (item) => {
+
+  //   // console.log("onValueChange item", item);
+
+  //   const {
+  //     filters,
+  //   } = this.state;
+
+  //   // AND = [...AND]
+
+
+
+
+  //   // AND[index] = item;
+
+  //   // this.setState({
+  //   //   filters: {
+  //   //     AND,
+  //   //   },
+  //   // });
+
+  //   let newFilters = { ...filters }
+
+  //   // newFilters[name]
+
+  //   Object.assign(newFilters, { ...item });
+
+  //   this.setState({
+  //     filters: newFilters,
+  //   });
+
   // }
 
 
   render() {
 
     const {
+      filters,
+    } = this.state;
+
+
+    const {
       schema,
       Grid,
-      // query: {
-      //   users,
-      // },
     } = this.context;
 
     const {
-      filters,
-      // filter,
-      _dirty,
-    } = this.state;
+      queryName,
+      whereType,
+    } = this.props;
 
-    console.log("schema", schema);
+    // // console.log("schema", schema);
 
     if (!schema) {
 
@@ -80,9 +186,9 @@ class MainPage extends PrismaCmsComponent {
     }
 
 
-    let queryName = "users";
-    let whereType = "where";
-    let orderType = "orderBy";
+    // let queryName = "users";
+    // let whereType = "where";
+    // let orderType = "orderBy";
 
 
     const {
@@ -92,7 +198,7 @@ class MainPage extends PrismaCmsComponent {
 
     const QueryType = types.find(n => n.kind === "OBJECT" && n.name === queryType.name);
 
-    console.log("Query", QueryType);
+    // // console.log("Query", QueryType);
 
     const {
       fields,
@@ -100,7 +206,7 @@ class MainPage extends PrismaCmsComponent {
 
     const queryField = fields.find(n => n.name === queryName);
 
-    console.log("Query queryField", queryField);
+    // // console.log("Query queryField", queryField);
 
     if (!queryField) {
       return null;
@@ -110,7 +216,7 @@ class MainPage extends PrismaCmsComponent {
       args,
     } = queryField;
 
-    console.log("Query queryField args", args);
+    // // console.log("Query queryField args", args);
 
     if (!args) {
       return null;
@@ -118,7 +224,7 @@ class MainPage extends PrismaCmsComponent {
 
     const whereArg = args.find(n => n.name === whereType);
 
-    console.log("Query queryField whereArg", whereArg);
+    // // console.log("Query queryField whereArg", whereArg);
 
     if (!whereArg) {
       return null;
@@ -131,7 +237,7 @@ class MainPage extends PrismaCmsComponent {
     } = whereArg;
 
 
-    console.log("Query queryField whereInputTypeName", whereInputTypeName);
+    // // console.log("Query queryField whereInputTypeName", whereInputTypeName);
 
     if (!whereInputTypeName) {
       return null;
@@ -139,158 +245,49 @@ class MainPage extends PrismaCmsComponent {
 
     const WhereInputType = types.find(n => n.kind === "INPUT_OBJECT" && n.name === whereInputTypeName);
 
-    console.log("Query queryField WhereInputType", WhereInputType);
+    // // console.log("Query queryField WhereInputType", WhereInputType);
 
     const {
       inputFields,
     } = WhereInputType;
 
-    console.log("Query queryField WhereInputType inputFields", inputFields);
+    // // console.log("Query queryField WhereInputType inputFields", inputFields);
 
     if (!inputFields) {
       return null;
     }
 
-    let inputs = []
-
-    // inputFields.map(n => {
-
-    //   const {
-    //     name,
-    //     type,
-    //   } = n;
-
-    //   inputs.push(<option
-    //     key={name}
-    //     value={name}
-    //   >
-    //     {name}
-    //   </option>);
-
-    // });
-
-    let {
-      AND,
-    } = filters;
-
-    let filtersView = AND.map((n, index) => {
-
-      return <Grid
-        key={index}
-        item
-      >
-
-        <FilterItem
-          fields={inputFields}
-          item={n}
-          // onChange={event => {
-
-          //   const {
-          //     value,
-          //   } = event.target;
-
-          //   console.log("onChange filter", event.target);
-
-          //   // Object.assign(n, {
-          //   //   [value]: null,
-          //   // });
-
-          //   // this.forceUpdate();
-
-          //   AND = [...AND]
-
-
-          //   if (value) {
-          //     AND[index] = {
-          //       [value]: null,
-          //     }
-          //   }
-          //   else {
-          //     AND[index] = {}
-          //   }
-
-
-          //   this.setState({
-          //     filters: {
-          //       AND,
-          //     },
-          //   });
-
-          // }}
-          onChange={(name, value) => {
-
-            console.log("onChange filter", name, value);
-
-            // Object.assign(n, {
-            //   [value]: null,
-            // });
-
-            // this.forceUpdate();
-
-            AND = [...AND]
-
-
-            if (name && value !== undefined) {
-              AND[index] = {
-                [name]: value,
-              }
-            }
-            else {
-              AND[index] = {}
-            }
-
-
-            this.setState({
-              filters: {
-                AND,
-              },
-            });
-
-          }}
-          onValueChange={(item) => {
-
-
-            AND = [...AND]
-
-
-            console.log("onValueChange item", item);
-
-
-            AND[index] = item;
-
-            this.setState({
-              filters: {
-                AND,
-              },
-            });
-
-          }}
-        />
-
-      </Grid>
-    })
-
-
-    return super.render(<Grid
+    return <Grid
       container
-      spacing={8}
+      spacing={16}
     >
       <Grid
         item
         xs={12}
       >
 
-        <Grid
-          container
-          spacing={8}
-        >
-
-          {filtersView}
-
-
-        </Grid>
+        <Filter
+          types={types}
+          filters={filters}
+          onChange={this.onNameChange}
+          // onValueChange={this.onValueChange}
+          setFilters={this.setFilters}
+          // queryName="users"
+          // whereType="where"
+          inputFields={inputFields}
+        />
 
       </Grid>
+
+      <Grid
+        item
+        xs={12}
+      >
+
+        {filters ? JSON.stringify(filters, true) : null}
+
+      </Grid>
+
       <Grid
         item
         xs={12}
@@ -304,18 +301,9 @@ class MainPage extends PrismaCmsComponent {
           where={filters}
         />
       </Grid>
-      <Grid
-        item
-        xs={12}
-      >
-        {/* {_dirty ? JSON.stringify(_dirty, true) : null} */}
-        {filters ? JSON.stringify(filters, true) : null}
-      </Grid>
-    </Grid>);
 
-    // return (
-    //   schema ? <Filters /> : "DSfsdf"
-    // );
+    </Grid>
+
   }
 }
 

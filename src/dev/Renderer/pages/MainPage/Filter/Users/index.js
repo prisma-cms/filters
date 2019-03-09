@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Context from "@prisma-cms/context";
-import { graphql } from 'react-apollo';
+import { graphql, Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
 
@@ -11,6 +11,20 @@ class Users extends Component {
   static propTypes = {
     data: PropTypes.object.isRequired,
   }
+
+  static contextType = Context;
+
+  componentWillMount() {
+
+    const {
+      query: {
+
+      },
+    } = this.context;
+
+    super.componentWillMount && super.componentWillMount()
+  }
+
 
   render() {
 
@@ -28,13 +42,13 @@ class Users extends Component {
         <tr>
           <th>
             id
-        </th>
+          </th>
           <th>
             username
-        </th>
+          </th>
           <th>
             fullname
-        </th>
+          </th>
         </tr>
         {objects.map(n => {
 

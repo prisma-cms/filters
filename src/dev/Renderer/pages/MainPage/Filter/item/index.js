@@ -6,8 +6,11 @@ import PrismaCmsComponent from "@prisma-cms/component";
 
 
 import gql from 'graphql-tag';
-import { TextField } from 'material-ui';
+import { TextField, MenuItem } from 'material-ui';
 import InputsArray from './array';
+import { Select } from 'material-ui';
+import { FormControl } from 'material-ui';
+import { InputLabel } from 'material-ui';
 
 class FilterItem extends PrismaCmsComponent {
 
@@ -72,6 +75,7 @@ class FilterItem extends PrismaCmsComponent {
       query: {
         users,
       },
+      UserAutocomplete,
     } = this.context;
 
     const {
@@ -86,7 +90,7 @@ class FilterItem extends PrismaCmsComponent {
       fields: inputFields,
     } = this.props;
 
-    console.log("schema", schema);
+    // console.log("schema", schema);
 
 
     let name = Object.keys(item)[0];
@@ -109,58 +113,88 @@ class FilterItem extends PrismaCmsComponent {
         type,
       } = n;
 
-      inputs.push(<option
+      let label = name;
+
+      // const parts = name.split("_");
+
+
+      // switch (parts[0]) {
+
+      //   case "username":
+
+      //     parts[0] = "Имя пользователя";
+
+      //     break;
+      // }
+
+
+      // label = parts.join("_");
+
+      inputs.push(<MenuItem
         key={name}
         value={name}
       >
-        {name}
-      </option>);
+        {label}
+      </MenuItem>);
 
     });
 
-    filters = <select
-      value={name || ""}
-      onChange={event => {
-
-        let {
-          value,
-        } = event.target;
-
-        let initialValue = null;
-
-        // this.setState({
-        //   filter: value,
-        // });
-
-        if (value) {
-
-          // if (value.endsWith("not_contains")) {
-          //   initialValue = undefined;
-          // }
-
-          // else 
-
-          if (value.endsWith("_contains")) {
-            initialValue = "";
-          }
-
-          else if (value.endsWith("_in")) {
-            initialValue = [];
-          }
-
-        }
-
-        onChange(value, initialValue);
-
+    filters = <FormControl
+      style={{
+        minWidth: 120,
       }}
     >
-      <option
-        value={""}
+      {/* <InputLabel>
+        {"name"}
+      </InputLabel> */}
+      <Select
+        value={name || ""}
+        onChange={event => {
+
+          let {
+            value,
+          } = event.target;
+
+          let initialValue = null;
+
+          // this.setState({
+          //   filter: value,
+          // });
+
+          if (value) {
+
+            // if (value.endsWith("not_contains")) {
+            //   initialValue = undefined;
+            // }
+
+            // else 
+
+            if (value.endsWith("_contains")) {
+              initialValue = "";
+            }
+
+            else if (value.endsWith("_in")) {
+              initialValue = [];
+            }
+
+            else if (value.endsWith("_some")) {
+              initialValue = {};
+            }
+
+          }
+
+          onChange(value, value === "" ? undefined : initialValue);
+
+        }}
       >
-        ---
-      </option>
-      {inputs}
-    </select>
+        <MenuItem
+          value={""}
+        >
+          ---
+      </MenuItem>
+        {inputs}
+      </Select>
+    </FormControl>
 
 
     /**
@@ -173,7 +207,7 @@ class FilterItem extends PrismaCmsComponent {
 
       const Filter = inputFields.find(n => n.name === name);
 
-      console.log("Filter", Filter);
+      // console.log("Filter", Filter);
 
       if (Filter) {
 
@@ -192,11 +226,12 @@ class FilterItem extends PrismaCmsComponent {
           isNonNull,
         } = this.getType(type);
 
-        console.log("getType Type", Type, isList, isNonNull);
+        // console.log("getType Type", Type, isList, isNonNull);
 
         const {
           kind,
           ofType,
+          // description,
         } = Type;
 
 
@@ -211,6 +246,8 @@ class FilterItem extends PrismaCmsComponent {
             input = this.renderField(<TextField
               key={name}
               name={name}
+              value={value || ""}
+              helperText={description}
               onChange={event => {
 
                 const {
@@ -227,6 +264,14 @@ class FilterItem extends PrismaCmsComponent {
 
             break;
 
+          case "INPUT_OBJECT":
+
+            // switch(name) {
+
+            //   case ""
+            // }
+
+            break;
 
 
         }
@@ -247,9 +292,9 @@ class FilterItem extends PrismaCmsComponent {
             value={value.length ? value : [""]}
             onChange={(event, index) => {
 
-              console.log("InputsArray onChange value", [...value]);
+              // console.log("InputsArray onChange value", [...value]);
 
-              console.log("InputsArray onChange event", index, event, { ...event.target });
+              // console.log("InputsArray onChange event", index, event, { ...event.target });
 
               const {
                 // name,
@@ -264,13 +309,13 @@ class FilterItem extends PrismaCmsComponent {
                 item = "";
                 index = newValue.push(item) - 1;
 
-                console.log("InputsArray onChange new index", index);
+                // console.log("InputsArray onChange new index", index);
 
               }
 
               newValue[index] = itemValue;
 
-              console.log("InputsArray onChange newValue", newValue);
+              // console.log("InputsArray onChange newValue", newValue);
 
               onValueChange({
                 [name]: newValue,
