@@ -10,6 +10,8 @@ import { Renderer as PrismaCmsRenderer } from '@prisma-cms/front'
 
 import MainMenu from './MainMenu';
 
+import MainPage from "./pages/MainPage";
+
 class DevRenderer extends PrismaCmsRenderer {
 
 
@@ -24,6 +26,17 @@ class DevRenderer extends PrismaCmsRenderer {
   }
 
 
+  componentDidMount(){
+
+    /**
+     * Бывает, не сразу перерендеривается после получения схемы,
+     * поэтому обновляем компонент
+     */
+    setTimeout(() => this.forceUpdate(), 1000);
+
+    super.componentDidMount && super.componentDidMount();
+  }
+
   getRoutes() {
 
     let routes = super.getRoutes();
@@ -32,7 +45,7 @@ class DevRenderer extends PrismaCmsRenderer {
       {
         exact: true,
         path: "/",
-        component: App,
+        component: MainPage,
       },
       // {
       //   path: "*",
