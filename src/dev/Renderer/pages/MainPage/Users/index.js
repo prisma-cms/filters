@@ -82,6 +82,14 @@ class UsersConnector extends Component {
 
   static contextType = Context;
 
+  static propTypes = {
+    first: PropTypes.number,
+  }
+
+  static defaultProps = {
+    first: 10,
+  }
+
 
   componentWillMount() {
 

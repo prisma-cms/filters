@@ -26,17 +26,6 @@ class DevRenderer extends PrismaCmsRenderer {
   }
 
 
-  componentDidMount(){
-
-    /**
-     * Бывает, не сразу перерендеривается после получения схемы,
-     * поэтому обновляем компонент
-     */
-    setTimeout(() => this.forceUpdate(), 1000);
-
-    super.componentDidMount && super.componentDidMount();
-  }
-
   getRoutes() {
 
     let routes = super.getRoutes();

@@ -1,3 +1,8 @@
+1.4.1
+=================================
+- Fix render after load schema
+- Set default users limit to 10 (in dev mode)
+
 1.4.0
 =================================
 - Public release
