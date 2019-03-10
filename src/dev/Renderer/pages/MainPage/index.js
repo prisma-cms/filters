@@ -10,6 +10,7 @@ import { TextField, IconButton } from 'material-ui';
 
 import CloseIcon from "material-ui-icons/Close";
 import { Typography } from 'material-ui';
+import AddFilter from './AddFilter';
 
 class MainPage extends Component {
 
@@ -28,61 +29,6 @@ class MainPage extends Component {
 
   state = {
     filters: {
-      username: "Fi1osof",
-      id_contains: "iddd",
-      // // username_contains: "test",
-      // fullname_contains: "Ник",
-      // id_in: [
-      //   // "123",
-      //   "435",
-      // ],
-      CreatedBy: {
-        fullname_contains: "Nikol",
-        id_not_in: [
-          "123",
-          // "435",
-        ],
-        ProjectsCreated_some: {
-          name: "fffe",
-          CreatedBy: {
-            username: "Fi1osof",
-            id_in: ["123", "435"],
-          },
-        },
-      },
-
-      // AND: [
-      //   {
-      //     CreatedBy: {
-      //       username: "Fi1osof",
-      //       id_in: [
-      //         "123",
-      //         "435",
-      //       ],
-      //     },
-      //   },
-      //   {
-      //     CreatedBy: {
-      //       username: "Fi1osof",
-      //       id_in: [
-      //         "123",
-      //         "435",
-      //       ],
-      //     },
-      //     id_in: [
-      //       "435",
-      //       "123",
-      //     ],
-      //   },
-      // ],
-      // CreatedBy: {
-      //   username: "Fi1osof",
-      // },
-      // ProjectsCreated_some: {
-      //   CreatedBy: {
-      //     username: "Fi1osof",
-      //   },
-      // },
     },
   }
 
@@ -133,95 +79,14 @@ class MainPage extends Component {
   }
 
 
-  /**
-   * Меняется значение элемента
-   */
-  onValueChange = (filters, item) => {
-
-    console.log("onValueChange onChange filters", filters);
-    console.log("onValueChange onChange item", item);
-
-    return;
-
-    // const {
-    //   filters,
-    // } = this.state;
-
-    // AND = [...AND]
-
-
-
-
-    // AND[index] = item;
-
-    // this.setState({
-    //   filters: {
-    //     AND,
-    //   },
-    // });
-
-    let newFilters = { ...filters }
-
-    // newFilters[name]
-
-    Object.assign(newFilters, { ...item });
-
-    this.setState({
-      filters: newFilters,
-    });
-
-  }
-
-  // onValueChange = (item) => {
-
-  //   // console.log("onValueChange item", item);
-
-  //   const {
-  //     filters,
-  //   } = this.state;
-
-  //   // AND = [...AND]
-
-
-
-
-  //   // AND[index] = item;
-
-  //   // this.setState({
-  //   //   filters: {
-  //   //     AND,
-  //   //   },
-  //   // });
-
-  //   let newFilters = { ...filters }
-
-  //   // newFilters[name]
-
-  //   Object.assign(newFilters, { ...item });
-
-  //   this.setState({
-  //     filters: newFilters,
-  //   });
-
-  // }
-
 
   renderInputBlock(field, name, key, filters, setFilters, deleteItem, title) {
 
-    // console.log("renderInputBlock key", key);
 
     const {
       Grid,
     } = this.context;
 
-    // return <Grid
-    //   key={key}
-    //   container
-    //   spacing={8}
-    //   style={{
-    //     border: "1px solid grey",
-    //   }}
-    // >
 
     return <Fragment
       key={key}
@@ -256,7 +121,6 @@ class MainPage extends Component {
             setFilters(newFilters);
 
           }}
-        // onClick={deleteItem}
         >
           <CloseIcon
 
@@ -265,11 +129,101 @@ class MainPage extends Component {
       </Grid>
     </Fragment>
 
-    {/* </Grid> */ }
   }
 
 
-  renderFilters(filters, setFilters, deleteItem, props) {
+  getType(type, isList = false, isNonNull = false) {
+
+    const {
+      kind,
+      ofType,
+    } = type;
+
+
+    switch (kind) {
+
+      case "LIST":
+
+        return this.getType(ofType, true, isNonNull);
+
+        break;
+
+      case "NON_NULL":
+
+        return this.getType(ofType, isList, true);
+
+        break;
+    }
+
+    return {
+      Type: type,
+      isList,
+      isNonNull,
+    };
+  }
+
+
+  renderFilters(filters, setFilters, deleteItem, props, __inputFields, inputFields) {
+
+
+    // console.log("Query queryField", queryField);
+
+    // if (!queryField) {
+    //   return null;
+    // }
+
+    // const {
+    //   args,
+    // } = queryField;
+
+    // // // console.log("Query queryField args", args);
+
+    // if (!args) {
+    //   return null;
+    // }
+
+    // // const whereArg = args.find(n => n.name === whereType);
+    // const whereArg = args.find(n => n.name === "where");
+
+    // // // console.log("Query queryField whereArg", whereArg);
+
+    // if (!whereArg) {
+    //   return null;
+    // }
+
+    // const {
+    //   type: {
+    //     name: whereInputTypeName,
+    //   },
+    // } = whereArg;
+
+
+    // // console.log("Query queryField whereInputTypeName", whereInputTypeName);
+
+    // if (!whereInputTypeName) {
+    //   return null;
+    // }
+
+    // // const WhereInputType = types.find(n => n.kind === "INPUT_OBJECT" && n.name === whereInputTypeName);
+
+    // // // // console.log("Query queryField WhereInputType", WhereInputType);
+
+    // // const {
+    // //   inputFields,
+    // // } = WhereInputType;
+
+    // const inputFields = this.getInputFields(whereInputTypeName);
+
+    // // // console.log("Query queryField WhereInputType inputFields", inputFields);
+
+    if (!inputFields) {
+      return null;
+    }
+
+
+
+    console.log("renderFilters filters", filters);
+    console.log("renderFilters inputFields", inputFields);
 
     const {
       Grid,
@@ -329,11 +283,6 @@ class MainPage extends Component {
             },
             event => {
 
-              // let newFilters = { ...filters };
-
-              // delete newFilters[name];
-
-              // setFilters(newFilters);
 
               let values = [...value];
 
@@ -355,109 +304,53 @@ class MainPage extends Component {
         });
 
 
-        // input = <Grid
-        //   key={index}
-        //   container
-        //   spacing={8}
-        // >
-
-        //   <Grid
-        //     item
-        //     style={{
-        //       border: "1px solid grey",
-        //     }}
-        //   >
-        //     <Typography
-        //       variant="subheading"
-        //     >
-        //       {name}
-        //     </Typography>
-
-        //     {fields}
-
-        //   </Grid>
-
-        //   <Grid
-        //     item
-        //   >
-        //     <IconButton
-        //       onClick={deleteItem ? deleteItem : event => {
-
-        //         let newFilters = { ...filters };
-
-        //         delete newFilters[name];
-
-        //         setFilters(newFilters);
-
-        //       }}
-        //     // onClick={deleteItem}
-        //     >
-        //       <CloseIcon
-
-        //       />
-        //     </IconButton>
-        //   </Grid>
-
-        // </Grid>
 
         input = this.renderInputBlock(fields, name, index, filters, setFilters, deleteItem, name);
 
       }
       else if (value && value instanceof Object) {
 
-        const field = this.renderFilters(value, (newFilters) => {
+        console.log("instanceof Object name", name);
 
-          const NewFilters = Object.assign({ ...filters }, {
-            [name]: newFilters,
-          })
+        // const inputFields = this.getInputFields(whereInputTypeName);
 
-          setFilters(NewFilters);
+        console.log("instanceof Object inputFields", inputFields);
 
-        });
+        const inputType = inputFields.find(n => n.name === name);
 
-        // input = <Grid
-        //   key={index}
-        //   container
-        //   spacing={8}
-        // >
+        console.log("instanceof Object Type", inputType);
 
-        //   <Grid
-        //     item
-        //     style={{
-        //       border: "1px solid grey",
-        //     }}
-        //   >
-        //     <Typography
-        //       variant="subheading"
-        //     >
-        //       {name}
-        //     </Typography>
 
-        //     {field}
-        //   </Grid>
+        const {
+          type: {
+            name: whereTypeName,
+          },
+        } = inputType;
 
-        //   <Grid
-        //     item
-        //   >
-        //     <IconButton
-        //       onClick={deleteItem ? deleteItem : event => {
 
-        //         let newFilters = { ...filters };
+        console.log("instanceof Object Type whereTypeName", whereTypeName);
 
-        //         delete newFilters[name];
+        const fieldInputFields = this.getInputFields(whereTypeName);
 
-        //         setFilters(newFilters);
+        console.log("instanceof Object Type fieldInputFields", fieldInputFields);
 
-        //       }}
-        //     // onClick={deleteItem}
-        //     >
-        //       <CloseIcon
+        const field = this.renderFilters(
+          value,
+          (newFilters) => {
 
-        //       />
-        //     </IconButton>
-        //   </Grid>
+            const NewFilters = Object.assign({ ...filters }, {
+              [name]: newFilters,
+            })
 
-        // </Grid>
+            setFilters(NewFilters);
+
+          },
+          null,
+          null,
+          null,
+          // inputType,
+          fieldInputFields,
+        );
 
         input = <Grid
           key={index}
@@ -496,42 +389,6 @@ class MainPage extends Component {
         />
 
 
-        // input = <Grid
-        //   key={index}
-        //   container
-        //   spacing={8}
-        // >
-
-        //   <Grid
-        //     item
-        //   >
-        //     {field}
-        //   </Grid>
-
-        //   <Grid
-        //     item
-        //   >
-        //     <IconButton
-        //       onClick={deleteItem ? deleteItem : event => {
-
-        //         let newFilters = { ...filters };
-
-        //         delete newFilters[name];
-
-        //         setFilters(newFilters);
-
-        //       }}
-        //     // onClick={deleteItem}
-        //     >
-        //       <CloseIcon
-
-        //       />
-        //     </IconButton>
-        //   </Grid>
-
-        // </Grid>
-
-
         input = this.renderInputBlock(field, name, index, filters, setFilters, deleteItem);
 
       }
@@ -545,6 +402,141 @@ class MainPage extends Component {
 
     // return inputs;
 
+    let addFilter;
+
+    if (inputFields) {
+
+      addFilter = <AddFilter
+        inputFields={inputFields}
+        onChange={event => {
+
+          const {
+            // name,
+            value,
+          } = event.target;
+
+          const inputField = inputFields.find(n => n.name === value);
+
+          const {
+            name,
+            type,
+          } = inputField;
+
+          let {
+            Type,
+            isList,
+            isNonNull,
+          } = this.getType(type);
+
+          const {
+            kind,
+          } = Type;
+
+          console.log("addFilter item", value, inputField, Type, isList, isNonNull);
+
+          let newFilters = { ...filters }
+
+          let newValue;
+
+
+          switch (kind) {
+
+            case "INPUT_OBJECT":
+
+              newValue = {}
+
+              break;
+
+            default:
+              newValue = isList ? undefined : isNonNull ? "" : null;
+          }
+
+
+          if (isList) {
+            newValue = newValue !== undefined ? [newValue] : []
+          }
+
+          newFilters[name] = newValue;
+
+          setFilters(newFilters);
+
+        }}
+      />
+
+      // addFilter = <select
+      //   onChange={event => {
+
+      //     const {
+      //       // name,
+      //       value,
+      //     } = event.target;
+
+      //     const inputField = inputFields.find(n => n.name === value);
+
+      //     const {
+      //       name,
+      //       type,
+      //     } = inputField;
+
+      //     let {
+      //       Type,
+      //       isList,
+      //       isNonNull,
+      //     } = this.getType(type);
+
+      //     const {
+      //       kind,
+      //     } = Type;
+
+      //     console.log("addFilter item", value, inputField, Type, isList, isNonNull);
+
+      //     let newFilters = { ...filters }
+
+      //     let newValue;
+
+
+      //     switch (kind) {
+
+      //       case "INPUT_OBJECT":
+
+      //         newValue = {}
+
+      //         break;
+
+      //       default:
+      //         newValue = isList ? undefined : isNonNull ? "" : null;
+      //     }
+
+
+      //     if (isList) {
+      //       newValue = newValue !== undefined ? [newValue] : []
+      //     }
+
+      //     newFilters[name] = newValue;
+
+      //     setFilters(newFilters);
+
+      //   }}
+      // >
+      //   {inputFields.map(n => {
+
+      //     const {
+      //       name,
+      //       type,
+      //     } = n;
+
+
+      //     return <option
+      //       key={name}
+      //       value={name}
+      //     >
+      //       {name}
+      //     </option>
+      //   })}
+      // </select>
+
+    }
+
     return <Grid
       container
       spacing={8}
@@ -557,36 +549,37 @@ class MainPage extends Component {
 
       {inputs}
 
+      <Grid
+        item
+      >
+        {addFilter}
+      </Grid>
+
     </Grid>;
 
-    // return <Grid
-    //   container
-    //   spacing={8}
-    // >
-
-    //   <Grid
-    //     item
-    //   >
-    //     {inputs}
-    //   </Grid>
-
-    //   <Grid
-    //     item
-    //   >
-    //     <IconButton
-    //       onClick={event => {
-
-    //       }}
-    //     >
-    //       <CloseIcon
-
-    //       />
-    //     </IconButton>
-    //   </Grid>
-
-    // </Grid>;
   }
 
+
+  getInputFields(name) {
+
+    const {
+      schema: {
+        types,
+      },
+    } = this.context;
+
+
+
+    const WhereInputType = types.find(n => n.kind === "INPUT_OBJECT" && n.name === name);
+
+    // // console.log("Query queryField WhereInputType", WhereInputType);
+
+    const {
+      inputFields,
+    } = WhereInputType;
+
+    return inputFields;
+  }
 
   render() {
 
@@ -605,17 +598,12 @@ class MainPage extends Component {
       whereType,
     } = this.props;
 
-    // // console.log("schema", schema);
+    console.log("schema", schema);
 
     if (!schema) {
 
       return null;
     }
-
-
-    // let queryName = "users";
-    // let whereType = "where";
-    // let orderType = "orderBy";
 
 
     const {
@@ -633,7 +621,8 @@ class MainPage extends Component {
 
     const queryField = fields.find(n => n.name === queryName);
 
-    // // console.log("Query queryField", queryField);
+
+    console.log("Query queryField", queryField);
 
     if (!queryField) {
       return null;
@@ -649,7 +638,8 @@ class MainPage extends Component {
       return null;
     }
 
-    const whereArg = args.find(n => n.name === whereType);
+    // const whereArg = args.find(n => n.name === whereType);
+    const whereArg = args.find(n => n.name === "where");
 
     // // console.log("Query queryField whereArg", whereArg);
 
@@ -664,25 +654,23 @@ class MainPage extends Component {
     } = whereArg;
 
 
-    // // console.log("Query queryField whereInputTypeName", whereInputTypeName);
+    // console.log("Query queryField whereInputTypeName", whereInputTypeName);
 
     if (!whereInputTypeName) {
       return null;
     }
 
-    const WhereInputType = types.find(n => n.kind === "INPUT_OBJECT" && n.name === whereInputTypeName);
+    // const WhereInputType = types.find(n => n.kind === "INPUT_OBJECT" && n.name === whereInputTypeName);
 
-    // // console.log("Query queryField WhereInputType", WhereInputType);
+    // // // console.log("Query queryField WhereInputType", WhereInputType);
 
-    const {
-      inputFields,
-    } = WhereInputType;
+    // const {
+    //   inputFields,
+    // } = WhereInputType;
+
+    const inputFields = this.getInputFields(whereInputTypeName);
 
     // // console.log("Query queryField WhereInputType inputFields", inputFields);
-
-    if (!inputFields) {
-      return null;
-    }
 
     return <Grid
       container
@@ -704,14 +692,26 @@ class MainPage extends Component {
           inputFields={inputFields}
         /> */}
 
-        {this.renderFilters(filters, filters => {
+        {this.renderFilters(
+          filters,
+          filters => {
 
-          console.log("renderFilters 1 filters", filters);
+            // console.log("renderFilters 1 filters", filters);
 
-          this.setState({
-            filters,
-          });
-        })}
+            this.setState({
+              filters,
+            });
+          },
+          null,
+          null,
+
+          // inputFields,
+          null,
+
+          inputFields,
+
+          // queryField,
+        )}
 
       </Grid>
 
