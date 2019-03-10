@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 import Context from "@prisma-cms/context";
 
-import Filter from "./Filter";
+// import Filter from "./Filter";
 
-import Users from "./Filter/Users";
+import Users from "./Users";
 import { TextField, IconButton } from 'material-ui';
 
 import CloseIcon from "material-ui-icons/Close";
@@ -43,40 +43,6 @@ class MainPage extends Component {
     });
   }
 
-
-  /**
-   * Меняется имя элемента
-   */
-  onNameChange = (name, value, index) => {
-
-    // console.log("onChange filter", name, value);
-
-    const {
-      filters,
-    } = this.state;
-
-    const names = Object.keys(filters);
-
-    /**
-    При изменении меняется и положение активного элемента.
-    Надо предыдущий элемент удалить, а вместо него поставить другой объект
-     */
-
-    let newFilters = { ...filters }
-
-    if (index !== undefined) {
-      delete newFilters[names[index]];
-    }
-
-
-    if (value !== undefined) {
-      newFilters[name] = value;
-    }
-
-
-    this.setFilters(newFilters);
-
-  }
 
 
 
@@ -166,64 +132,12 @@ class MainPage extends Component {
   renderFilters(filters, setFilters, deleteItem, props, __inputFields, inputFields) {
 
 
-    // console.log("Query queryField", queryField);
-
-    // if (!queryField) {
-    //   return null;
-    // }
-
-    // const {
-    //   args,
-    // } = queryField;
-
-    // // // console.log("Query queryField args", args);
-
-    // if (!args) {
-    //   return null;
-    // }
-
-    // // const whereArg = args.find(n => n.name === whereType);
-    // const whereArg = args.find(n => n.name === "where");
-
-    // // // console.log("Query queryField whereArg", whereArg);
-
-    // if (!whereArg) {
-    //   return null;
-    // }
-
-    // const {
-    //   type: {
-    //     name: whereInputTypeName,
-    //   },
-    // } = whereArg;
-
-
-    // // console.log("Query queryField whereInputTypeName", whereInputTypeName);
-
-    // if (!whereInputTypeName) {
-    //   return null;
-    // }
-
-    // // const WhereInputType = types.find(n => n.kind === "INPUT_OBJECT" && n.name === whereInputTypeName);
-
-    // // // // console.log("Query queryField WhereInputType", WhereInputType);
-
-    // // const {
-    // //   inputFields,
-    // // } = WhereInputType;
-
-    // const inputFields = this.getInputFields(whereInputTypeName);
-
-    // // // console.log("Query queryField WhereInputType inputFields", inputFields);
 
     if (!inputFields) {
       return null;
     }
 
 
-
-    console.log("renderFilters filters", filters);
-    console.log("renderFilters inputFields", inputFields);
 
     const {
       Grid,
@@ -248,12 +162,10 @@ class MainPage extends Component {
 
       const newName = name;
 
-      // const value = filters[name];
       const value = values[index];
 
       let input;
 
-      // console.log("input value", name, value);
 
       if (value && Array.isArray(value)) {
 
@@ -310,15 +222,9 @@ class MainPage extends Component {
       }
       else if (value && value instanceof Object) {
 
-        console.log("instanceof Object name", name);
-
-        // const inputFields = this.getInputFields(whereInputTypeName);
-
-        console.log("instanceof Object inputFields", inputFields);
 
         const inputType = inputFields.find(n => n.name === name);
 
-        console.log("instanceof Object Type", inputType);
 
 
         const {
@@ -328,11 +234,8 @@ class MainPage extends Component {
         } = inputType;
 
 
-        console.log("instanceof Object Type whereTypeName", whereTypeName);
-
         const fieldInputFields = this.getInputFields(whereTypeName);
 
-        console.log("instanceof Object Type fieldInputFields", fieldInputFields);
 
         const field = this.renderFilters(
           value,
@@ -432,7 +335,7 @@ class MainPage extends Component {
             kind,
           } = Type;
 
-          console.log("addFilter item", value, inputField, Type, isList, isNonNull);
+          // console.log("addFilter item", value, inputField, Type, isList, isNonNull);
 
           let newFilters = { ...filters }
 
@@ -463,77 +366,6 @@ class MainPage extends Component {
         }}
       />
 
-      // addFilter = <select
-      //   onChange={event => {
-
-      //     const {
-      //       // name,
-      //       value,
-      //     } = event.target;
-
-      //     const inputField = inputFields.find(n => n.name === value);
-
-      //     const {
-      //       name,
-      //       type,
-      //     } = inputField;
-
-      //     let {
-      //       Type,
-      //       isList,
-      //       isNonNull,
-      //     } = this.getType(type);
-
-      //     const {
-      //       kind,
-      //     } = Type;
-
-      //     console.log("addFilter item", value, inputField, Type, isList, isNonNull);
-
-      //     let newFilters = { ...filters }
-
-      //     let newValue;
-
-
-      //     switch (kind) {
-
-      //       case "INPUT_OBJECT":
-
-      //         newValue = {}
-
-      //         break;
-
-      //       default:
-      //         newValue = isList ? undefined : isNonNull ? "" : null;
-      //     }
-
-
-      //     if (isList) {
-      //       newValue = newValue !== undefined ? [newValue] : []
-      //     }
-
-      //     newFilters[name] = newValue;
-
-      //     setFilters(newFilters);
-
-      //   }}
-      // >
-      //   {inputFields.map(n => {
-
-      //     const {
-      //       name,
-      //       type,
-      //     } = n;
-
-
-      //     return <option
-      //       key={name}
-      //       value={name}
-      //     >
-      //       {name}
-      //     </option>
-      //   })}
-      // </select>
 
     }
 
@@ -568,11 +400,7 @@ class MainPage extends Component {
       },
     } = this.context;
 
-
-
     const WhereInputType = types.find(n => n.kind === "INPUT_OBJECT" && n.name === name);
-
-    // // console.log("Query queryField WhereInputType", WhereInputType);
 
     const {
       inputFields,
@@ -598,7 +426,6 @@ class MainPage extends Component {
       whereType,
     } = this.props;
 
-    console.log("schema", schema);
 
     if (!schema) {
 
@@ -613,7 +440,6 @@ class MainPage extends Component {
 
     const QueryType = types.find(n => n.kind === "OBJECT" && n.name === queryType.name);
 
-    // // console.log("Query", QueryType);
 
     const {
       fields,
@@ -621,8 +447,6 @@ class MainPage extends Component {
 
     const queryField = fields.find(n => n.name === queryName);
 
-
-    console.log("Query queryField", queryField);
 
     if (!queryField) {
       return null;
@@ -632,16 +456,13 @@ class MainPage extends Component {
       args,
     } = queryField;
 
-    // // console.log("Query queryField args", args);
 
     if (!args) {
       return null;
     }
 
-    // const whereArg = args.find(n => n.name === whereType);
     const whereArg = args.find(n => n.name === "where");
 
-    // // console.log("Query queryField whereArg", whereArg);
 
     if (!whereArg) {
       return null;
@@ -654,23 +475,22 @@ class MainPage extends Component {
     } = whereArg;
 
 
-    // console.log("Query queryField whereInputTypeName", whereInputTypeName);
 
     if (!whereInputTypeName) {
       return null;
     }
 
-    // const WhereInputType = types.find(n => n.kind === "INPUT_OBJECT" && n.name === whereInputTypeName);
-
-    // // // console.log("Query queryField WhereInputType", WhereInputType);
-
-    // const {
-    //   inputFields,
-    // } = WhereInputType;
 
     const inputFields = this.getInputFields(whereInputTypeName);
 
-    // // console.log("Query queryField WhereInputType inputFields", inputFields);
+
+    let filtersJson;
+
+    if (filters && Object.keys(filters).length) {
+
+      filtersJson = JSON.stringify(filters, null, 2);
+    }
+
 
     return <Grid
       container
@@ -681,22 +501,11 @@ class MainPage extends Component {
         xs={12}
       >
 
-        {/* <Filter
-          types={types}
-          filters={filters}
-          onChange={this.onNameChange}
-          // onValueChange={this.onValueChange}
-          setFilters={this.setFilters}
-          // queryName="users"
-          // whereType="where"
-          inputFields={inputFields}
-        /> */}
 
         {this.renderFilters(
           filters,
           filters => {
 
-            // console.log("renderFilters 1 filters", filters);
 
             this.setState({
               filters,
@@ -705,41 +514,37 @@ class MainPage extends Component {
           null,
           null,
 
-          // inputFields,
           null,
 
           inputFields,
 
-          // queryField,
         )}
 
       </Grid>
 
-      <Grid
-        item
-        xs={12}
-      >
-
-        <div
-          style={{
-            whiteSpace: "pre-wrap",
-          }}
+      {filtersJson ?
+        <Grid
+          item
+          xs={12}
         >
-          {filters ? JSON.stringify(filters, null, 2) : null}
-        </div>
 
-      </Grid>
+          <div
+            style={{
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {filtersJson}
+          </div>
+
+        </Grid>
+        : null
+      }
 
       <Grid
         item
         xs={12}
       >
         <Users
-          // where={{
-          //   AND: [
-          //     filters.AND[0],
-          //   ]
-          // }}
           where={filters}
         />
       </Grid>

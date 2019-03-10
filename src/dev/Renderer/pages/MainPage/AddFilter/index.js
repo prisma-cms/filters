@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'material-ui';
+import { Button, IconButton } from 'material-ui';
 
 import AddIcon from "material-ui-icons/AddCircleOutline";
+import { FilterList } from 'material-ui-icons';
 
 class AddFilter extends Component {
 
@@ -76,18 +77,28 @@ class AddFilter extends Component {
     }
     else {
 
-      content = <Button
-        size="small"
+      // content = <Button
+      //   size="small"
+      //   onClick={event => {
+      //     this.setState({
+      //       opened: true,
+      //     });
+      //   }}
+      // >
+      //   <AddIcon
+
+      //   /> Add filter
+      // </Button>
+
+      content = <IconButton
         onClick={event => {
           this.setState({
             opened: true,
           });
         }}
       >
-        <AddIcon
-
-        /> Add
-      </Button>
+        <FilterList />
+      </IconButton>
     }
 
 
