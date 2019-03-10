@@ -1,24 +1,18 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import "./styles/less/styles.css";
+import Context from "@prisma-cms/context";
 
-import Context from '@prisma-cms/context';
+// import Filter from "./Filter";
 
-import SubscriptionProvider from "./components/SubscriptionProvider";
-import ContextProvider from "./components/ContextProvider";
-import { Typography, IconButton } from 'material-ui';
+import Users from "./Users";
+import { TextField, IconButton } from 'material-ui';
+
 import CloseIcon from "material-ui-icons/Close";
-import { TextField } from 'material-ui';
-import AddFilter from './dev/Renderer/pages/MainPage/AddFilter';
+import { Typography } from 'material-ui';
+import AddFilter from './AddFilter';
 
-export {
-  ContextProvider,
-  SubscriptionProvider,
-}
-
-
-class App extends Component {
+class MainPage extends Component {
 
   static contextType = Context;
 
@@ -26,14 +20,17 @@ class App extends Component {
   static propTypes = {
     queryName: PropTypes.string.isRequired,
     whereType: PropTypes.string.isRequired,
-    setFilters: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
-    // queryName: "users",
+    queryName: "users",
     whereType: "where",
   };
 
+  state = {
+    filters: {
+    },
+  }
 
 
   /**
@@ -41,13 +38,9 @@ class App extends Component {
    */
   setFilters = (filters) => {
 
-    // console.log("setFilters filters", filters);
-
-    const {
-      setFilters,
-    } = this.props;
-
-    return setFilters(filters);
+    this.setState({
+      filters,
+    });
   }
 
 
@@ -413,18 +406,14 @@ class App extends Component {
       inputFields,
     } = WhereInputType;
 
-    return inputFields.filter(n => {
-
-      const {
-        name,
-      } = n;
-
-      return ["AND", "OR", "NOT"].indexOf(name) === -1 && !/(\_in)$/.test(name) ? true : false
-
-    });
+    return inputFields;
   }
 
   render() {
+
+    const {
+      filters,
+    } = this.state;
 
 
     const {
@@ -433,7 +422,6 @@ class App extends Component {
     } = this.context;
 
     const {
-      filters,
       queryName,
       whereType,
     } = this.props;
@@ -518,8 +506,10 @@ class App extends Component {
           filters,
           filters => {
 
-            this.setFilters(filters)
 
+            this.setState({
+              filters,
+            });
           },
           null,
           null,
@@ -550,9 +540,19 @@ class App extends Component {
         : null
       }
 
+      <Grid
+        item
+        xs={12}
+      >
+        <Users
+          where={filters}
+        />
+      </Grid>
+
     </Grid>
 
   }
 }
 
-export default App;
+
+export default MainPage;
