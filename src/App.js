@@ -26,7 +26,7 @@ class App extends Component {
   static propTypes = {
     queryName: PropTypes.string.isRequired,
     whereType: PropTypes.string.isRequired,
-    setFilters: PropTypes.object.isRequired,
+    setFilters: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -472,6 +472,8 @@ class App extends Component {
     const queryField = fields.find(n => n.name === queryName);
 
 
+    // console.log("queryField", queryField);
+
     if (!queryField) {
       return null;
     }
@@ -487,18 +489,37 @@ class App extends Component {
 
     const whereArg = args.find(n => n.name === "where");
 
+    // console.log("whereArg", whereArg);
 
     if (!whereArg) {
       return null;
     }
 
-    const {
+    let {
       type: {
         name: whereInputTypeName,
+        kind,
+        ofType,
       },
     } = whereArg;
 
 
+    // console.log("whereInputTypeName", whereInputTypeName);
+
+    // console.log("whereInputTypeName kind", kind);
+    // console.log("whereInputTypeName ofType", ofType);
+    
+    if (!whereInputTypeName && kind === "NON_NULL" && ofType) {
+      
+      const {
+        name,
+      } = ofType;
+      
+      whereInputTypeName = name;
+      
+    }
+
+    // console.log("whereInputTypeName 2", whereInputTypeName);
 
     if (!whereInputTypeName) {
       return null;

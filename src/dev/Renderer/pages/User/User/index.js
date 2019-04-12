@@ -6,7 +6,7 @@ import { graphql, Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
 
-class Users extends Component {
+class User extends Component {
 
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -30,7 +30,7 @@ class Users extends Component {
 
     const {
       data: {
-        objects,
+        object,
       },
     } = this.props;
 
@@ -38,7 +38,12 @@ class Users extends Component {
       UserLink,
     } = this.context;
 
-    return objects && <table
+    if (!object) {
+      return null;
+    }
+
+
+    return <table
       border="1"
       cellSpacing={2}
     >
@@ -46,15 +51,12 @@ class Users extends Component {
         <tr>
           <th>
             id
-          </th>
+        </th>
           <th>
             username
-          </th>
-          {/* <th>
-            fullname
-          </th> */}
+        </th>
         </tr>
-        {objects.map(n => {
+        {[object].map(n => {
 
           const {
             id,
@@ -76,12 +78,12 @@ class Users extends Component {
           </tr>
         })}
       </tbody>
-    </table> || null
+    </table>
 
   }
 }
 
-class UsersConnector extends Component {
+class UserConnector extends Component {
 
   static contextType = Context;
 
@@ -98,11 +100,11 @@ class UsersConnector extends Component {
 
     const {
       query: {
-        users,
+        user,
       },
     } = this.context;
 
-    this.Renderer = graphql(gql(users))(Users);
+    this.Renderer = graphql(gql(user))(User);
 
 
     super.componentWillMount && super.componentWillMount();
@@ -121,4 +123,4 @@ class UsersConnector extends Component {
 }
 
 
-export default UsersConnector;
+export default UserConnector;

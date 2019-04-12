@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from "prop-types";
 
 import App, {
@@ -11,6 +11,7 @@ import { Renderer as PrismaCmsRenderer } from '@prisma-cms/front'
 import MainMenu from './MainMenu';
 
 import MainPage from "./pages/MainPage";
+import UserPage from './pages/User';
 
 class DevRenderer extends PrismaCmsRenderer {
 
@@ -36,6 +37,33 @@ class DevRenderer extends PrismaCmsRenderer {
         path: "/",
         component: MainPage,
       },
+      {
+        exact: true,
+        path: "/users",
+        component: MainPage,
+      },
+      {
+        exact: true,
+        path: "/users/:userId",
+        render: (props) => {
+          const {
+            params,
+          } = props.match;
+
+          const {
+            userId,
+          } = params || {};
+
+          return <UserPage
+            key={userId}
+            userId={userId}
+            // where={{
+            //   id: userId,
+            // }}
+            {...props}
+          />
+        }
+      },
       // {
       //   path: "*",
       //   render: props => this.renderOtherPages(props),
@@ -50,13 +78,16 @@ class DevRenderer extends PrismaCmsRenderer {
 
     return <MainMenu />
   }
-  
+
 
   renderWrapper() {
 
     return <ContextProvider>
       <SubscriptionProvider>
-        {super.renderWrapper()}
+        <Fragment>
+          {this.renderMenu()}
+          {super.renderWrapper()}
+        </Fragment>
       </SubscriptionProvider>
     </ContextProvider>;
 
@@ -72,7 +103,7 @@ class DevRenderer extends PrismaCmsRenderer {
 
     return pure ? <App
       {...other}
-    /> : super.render();
+    /> : super.render()
 
   }
 
