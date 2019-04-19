@@ -11,6 +11,9 @@ import { Typography, IconButton } from 'material-ui';
 import CloseIcon from "material-ui-icons/Close";
 import { TextField } from 'material-ui';
 import AddFilter from './dev/Renderer/pages/MainPage/AddFilter';
+import { FormControlLabel } from 'material-ui';
+import { Switch } from 'material-ui';
+import { Button } from 'material-ui';
 
 export {
   ContextProvider,
@@ -156,7 +159,7 @@ class App extends Component {
       return null;
     }
 
-
+    console.log("inputFields", inputFields);
 
     const {
       Grid,
@@ -239,12 +242,16 @@ class App extends Component {
         input = this.renderInputBlock(fields, name, index, filters, setFilters, deleteItem, name);
 
       }
+
+      /**
+       * Вложенные объекты
+       */
       else if (value && value instanceof Object) {
 
 
         const inputType = inputFields.find(n => n.name === name);
 
-
+        console.log("inputType", inputType);
 
         const {
           type: {
@@ -292,26 +299,133 @@ class App extends Component {
       }
       else {
 
-        const field = <TextField
-          name={name}
-          label={name}
-          value={value || ""}
-          onChange={event => {
+        /**
+         * Выводим конечное поле.
+         * Здесь сразу еще и определяем тип поля (строка/число/логическое/список)
+         */
 
-            const {
-              name,
-              value,
-            } = event.target;
+        console.log("name", name);
 
-            setFilters(Object.assign({ ...filters }, {
-              [name]: value,
-            }));
+        const fieldByName = inputFields.find(n => n.name === name);
 
-          }}
-        />
+        console.log("fieldByName", fieldByName);
+
+        if (!fieldByName) {
+          return null;
+        }
+
+        const {
+          type: {
+            name: typeName,
+          },
+        } = fieldByName;
+
+        let field;
 
 
-        input = this.renderInputBlock(field, name, index, filters, setFilters, deleteItem);
+        switch (typeName) {
+
+          case "Boolean":
+
+            console.log("value", value);
+
+            if (typeof value === "boolean") {
+
+              field = <FormControlLabel
+                control={
+                  <Switch
+                    name={name}
+                    checked={value === true}
+                    color="primary"
+                    onChange={(event, checked) => {
+
+                      console.log("checked", checked);
+
+                      // const {
+                      //   name,
+                      //   value,
+                      // } = event.target;
+
+                      setFilters(Object.assign({ ...filters }, {
+                        [name]: checked,
+                      }));
+
+                    }}
+                  // {...other}
+                  />
+                }
+                label={name}
+              // fullWidth
+              />
+
+            }
+            else {
+              field = <Grid
+                container
+                spacing={8}
+              >
+                <Grid
+                  item
+                >
+                  <Button
+                    size="small"
+                    color="primary"
+                    onClick={event => {
+                      setFilters(Object.assign({ ...filters }, {
+                        [name]: true,
+                      }));
+                    }}
+                  >
+                    True
+                  </Button>
+                </Grid>
+                <Grid
+                  item
+                >
+                  <Button
+                    size="small"
+                    color="secondary"
+                    onClick={event => {
+                      setFilters(Object.assign({ ...filters }, {
+                        [name]: false,
+                      }));
+                    }}
+                  >
+                    False
+                  </Button>
+                </Grid>
+              </Grid>
+            }
+
+
+            break;
+
+          default:
+
+            field = <TextField
+              name={name}
+              label={name}
+              value={value || ""}
+              onChange={event => {
+
+                const {
+                  name,
+                  value,
+                } = event.target;
+
+                setFilters(Object.assign({ ...filters }, {
+                  [name]: value,
+                }));
+
+              }}
+            />
+
+
+        }
+
+        if (field) {
+          input = this.renderInputBlock(field, name, index, filters, setFilters, deleteItem);
+        }
 
       }
 
@@ -423,21 +537,21 @@ class App extends Component {
 
     const {
       inputFields,
-    } = WhereInputType;
+    } = WhereInputType || {};
 
-    return inputFields.filter(n => {
+    return inputFields ? inputFields.filter(n => {
 
       const {
         name,
-      } = n;
+      } = n || {};
 
-      return ["AND", "OR", "NOT"].indexOf(name) === -1 && !/(\_in)$/.test(name) ? true : false
+      return name && ["AND", "OR", "NOT"].indexOf(name) === -1 && !/(\_in)$/.test(name) ? true : false
 
-    });
+    }) : [];
   }
 
-  render() {
 
+  render() {
 
     const {
       schema,
@@ -508,15 +622,15 @@ class App extends Component {
 
     // console.log("whereInputTypeName kind", kind);
     // console.log("whereInputTypeName ofType", ofType);
-    
+
     if (!whereInputTypeName && kind === "NON_NULL" && ofType) {
-      
+
       const {
         name,
       } = ofType;
-      
+
       whereInputTypeName = name;
-      
+
     }
 
     // console.log("whereInputTypeName 2", whereInputTypeName);
