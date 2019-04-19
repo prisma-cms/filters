@@ -2,6 +2,7 @@
 - Added Boolean filter
 - Added Number filter
 - Added ENUM filter
+- Added set null Object field
 
 1.4.2
 =================================

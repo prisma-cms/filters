@@ -296,8 +296,28 @@ class App extends Component {
               border: "1px solid grey",
             }}
           >
+
             {this.renderInputBlock(field, name, index, filters, setFilters, deleteItem, name)}
+
+            <Grid
+              item
+            >
+              <Button
+                size="small"
+                onClick={event => {
+
+                  setFilters(Object.assign({ ...filters }, {
+                    [name]: null,
+                  }));
+
+                }}
+              >
+                Set null
+              </Button>
+            </Grid>
+
           </Grid>
+
         </Grid>;
 
       }
@@ -307,6 +327,7 @@ class App extends Component {
          * Выводим конечное поле.
          * Здесь сразу еще и определяем тип поля (строка/число/логическое/список)
          */
+        let field;
 
         console.log("name", name);
 
@@ -314,174 +335,127 @@ class App extends Component {
 
         console.log("fieldByName", fieldByName);
 
-        if (!fieldByName) {
-          return null;
-        }
+        if (fieldByName) {
 
-        const {
-          type: {
-            kind: typeKind,
-            name: typeName,
-          },
-        } = fieldByName;
-
-        let field;
+          const {
+            type: {
+              kind: typeKind,
+              name: typeName,
+            },
+          } = fieldByName;
 
 
-        switch (typeKind) {
+          switch (typeKind) {
 
-          case "SCALAR":
+            case "SCALAR":
 
-            switch (typeName) {
+              switch (typeName) {
 
-              case "Boolean":
+                case "Boolean":
 
-                console.log("value", value);
+                  console.log("value", value);
 
-                if (typeof value === "boolean") {
+                  if (typeof value === "boolean") {
 
-                  field = <FormControlLabel
-                    control={
-                      <Switch
-                        name={name}
-                        checked={value === true}
-                        color="primary"
-                        onChange={(event, checked) => {
+                    field = <FormControlLabel
+                      control={
+                        <Switch
+                          name={name}
+                          checked={value === true}
+                          color="primary"
+                          onChange={(event, checked) => {
 
-                          console.log("checked", checked);
+                            console.log("checked", checked);
 
-                          // const {
-                          //   name,
-                          //   value,
-                          // } = event.target;
+                            // const {
+                            //   name,
+                            //   value,
+                            // } = event.target;
 
-                          setFilters(Object.assign({ ...filters }, {
-                            [name]: checked,
-                          }));
+                            setFilters(Object.assign({ ...filters }, {
+                              [name]: checked,
+                            }));
 
-                        }}
-                      // {...other}
-                      />
-                    }
+                          }}
+                        // {...other}
+                        />
+                      }
+                      label={name}
+                    // fullWidth
+                    />
+
+                  }
+                  else {
+                    field = <Grid
+                      container
+                      spacing={8}
+                    >
+                      <Grid
+                        item
+                      >
+                        <Button
+                          size="small"
+                          color="primary"
+                          onClick={event => {
+                            setFilters(Object.assign({ ...filters }, {
+                              [name]: true,
+                            }));
+                          }}
+                        >
+                          True
+                              </Button>
+                      </Grid>
+                      <Grid
+                        item
+                      >
+                        <Button
+                          size="small"
+                          color="secondary"
+                          onClick={event => {
+                            setFilters(Object.assign({ ...filters }, {
+                              [name]: false,
+                            }));
+                          }}
+                        >
+                          False
+                              </Button>
+                      </Grid>
+                    </Grid>
+                  }
+
+
+                  break;
+
+
+                case "Int":
+                case "Float":
+
+                  field = <TextField
+                    name={name}
                     label={name}
-                  // fullWidth
+                    value={value || ""}
+                    type="number"
+                    onChange={event => {
+
+                      const {
+                        name,
+                        value,
+                      } = event.target;
+
+                      setFilters(Object.assign({ ...filters }, {
+                        [name]: Number(value),
+                      }));
+
+                    }}
                   />
 
-                }
-                else {
-                  field = <Grid
-                    container
-                    spacing={8}
-                  >
-                    <Grid
-                      item
-                    >
-                      <Button
-                        size="small"
-                        color="primary"
-                        onClick={event => {
-                          setFilters(Object.assign({ ...filters }, {
-                            [name]: true,
-                          }));
-                        }}
-                      >
-                        True
-                            </Button>
-                    </Grid>
-                    <Grid
-                      item
-                    >
-                      <Button
-                        size="small"
-                        color="secondary"
-                        onClick={event => {
-                          setFilters(Object.assign({ ...filters }, {
-                            [name]: false,
-                          }));
-                        }}
-                      >
-                        False
-                            </Button>
-                    </Grid>
-                  </Grid>
-                }
+                  break;
 
+                default:
 
-                break;
-
-
-              case "Int":
-              case "Float":
-
-                field = <TextField
-                  name={name}
-                  label={name}
-                  value={value || ""}
-                  type="number"
-                  onChange={event => {
-
-                    const {
-                      name,
-                      value,
-                    } = event.target;
-
-                    setFilters(Object.assign({ ...filters }, {
-                      [name]: Number(value),
-                    }));
-
-                  }}
-                />
-
-                break;
-
-              default:
-
-                field = <TextField
-                  name={name}
-                  label={name}
-                  value={value || ""}
-                  onChange={event => {
-
-                    const {
-                      name,
-                      value,
-                    } = event.target;
-
-                    setFilters(Object.assign({ ...filters }, {
-                      [name]: value,
-                    }));
-
-                  }}
-                />
-
-
-            }
-
-            break;
-
-
-          case "ENUM":
-
-            {
-
-
-              const Type = this.getSchemaType(n => n.name === typeName && n.kind === typeKind);
-
-              if (Type) {
-
-
-                const {
-                  enumValues,
-                } = Type;
-
-                field = <FormControl
-                  fullWidth
-                  style={{
-                    minWidth: 150,
-                  }}
-                >
-                  <InputLabel>{name}</InputLabel>
-                  <Select
+                  field = <TextField
+                    name={name}
+                    label={name}
                     value={value || ""}
                     onChange={event => {
 
@@ -495,37 +469,112 @@ class App extends Component {
                       }));
 
                     }}
-                    inputProps={{
-                      name,
-                      // id: 'age-simple',
-                    }}
-                  >
-                    {enumValues.map(n => {
+                  />
 
-                      const {
-                        name: fieldName,
-                      } = n;
-
-                      return <MenuItem
-                        key={fieldName}
-                        value={fieldName}
-                      >
-                        {fieldName}
-                      </MenuItem>
-                    })}
-                  </Select>
-                </FormControl>;
 
               }
-            }
 
-            break;
+              break;
+
+
+            case "ENUM":
+
+              {
+
+
+                const Type = this.getSchemaType(n => n.name === typeName && n.kind === typeKind);
+
+                if (Type) {
+
+
+                  const {
+                    enumValues,
+                  } = Type;
+
+                  field = <FormControl
+                    fullWidth
+                    style={{
+                      minWidth: 150,
+                    }}
+                  >
+                    <InputLabel>{name}</InputLabel>
+                    <Select
+                      value={value || ""}
+                      onChange={event => {
+
+                        const {
+                          name,
+                          value,
+                        } = event.target;
+
+                        setFilters(Object.assign({ ...filters }, {
+                          [name]: value,
+                        }));
+
+                      }}
+                      inputProps={{
+                        name,
+                        // id: 'age-simple',
+                      }}
+                    >
+                      {enumValues.map(n => {
+
+                        const {
+                          name: fieldName,
+                        } = n;
+
+                        return <MenuItem
+                          key={fieldName}
+                          value={fieldName}
+                        >
+                          {fieldName}
+                        </MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>;
+
+                }
+              }
+
+              break;
+
+            default:
+
+              field = <FormControl
+                style={{
+                  minWidth: 80,
+                }}
+              >
+                <Typography
+                  variant="caption"
+                >
+                  {name}
+                </Typography>
+
+                <Typography>
+                  {value === undefined ? null :
+                    value === null ? "null" :
+                      value === true ? "true" :
+                        value === false ? "false" :
+                          typeof value !== "object" ? value : null
+                  }
+                </Typography>
+
+              </FormControl>
+
+          }
 
         }
-
-        if (field) {
-          input = this.renderInputBlock(field, name, index, filters, setFilters, deleteItem);
+        else {
+          field = <InputLabel>
+            {name}
+          </InputLabel>
         }
+
+
+        // if (field) {
+        input = this.renderInputBlock(field, name, index, filters, setFilters, deleteItem);
+        // }
 
       }
 
