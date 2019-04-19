@@ -60,7 +60,7 @@ class App extends Component {
    */
   setFilters = (filters) => {
 
-    // console.log("setFilters filters", filters);
+
 
     const {
       setFilters,
@@ -163,7 +163,7 @@ class App extends Component {
       return null;
     }
 
-    console.log("inputFields", inputFields);
+
 
     const {
       Grid,
@@ -255,7 +255,7 @@ class App extends Component {
 
         const inputType = inputFields.find(n => n.name === name);
 
-        console.log("inputType", inputType);
+
 
         const {
           type: {
@@ -329,11 +329,11 @@ class App extends Component {
          */
         let field;
 
-        console.log("name", name);
+
 
         const fieldByName = inputFields.find(n => n.name === name);
 
-        console.log("fieldByName", fieldByName);
+
 
         if (fieldByName) {
 
@@ -353,7 +353,7 @@ class App extends Component {
 
                 case "Boolean":
 
-                  console.log("value", value);
+
 
                   if (typeof value === "boolean") {
 
@@ -365,7 +365,7 @@ class App extends Component {
                           color="primary"
                           onChange={(event, checked) => {
 
-                            console.log("checked", checked);
+
 
                             // const {
                             //   name,
@@ -617,7 +617,7 @@ class App extends Component {
             kind,
           } = Type;
 
-          // console.log("addFilter item", value, inputField, Type, isList, isNonNull);
+
 
           let newFilters = { ...filters }
 
@@ -754,7 +754,7 @@ class App extends Component {
     const queryField = fields.find(n => n.name === queryName);
 
 
-    // console.log("queryField", queryField);
+
 
     if (!queryField) {
       return null;
@@ -771,7 +771,7 @@ class App extends Component {
 
     const whereArg = args.find(n => n.name === "where");
 
-    // console.log("whereArg", whereArg);
+
 
     if (!whereArg) {
       return null;
@@ -786,10 +786,10 @@ class App extends Component {
     } = whereArg;
 
 
-    // console.log("whereInputTypeName", whereInputTypeName);
 
-    // console.log("whereInputTypeName kind", kind);
-    // console.log("whereInputTypeName ofType", ofType);
+
+
+
 
     if (!whereInputTypeName && kind === "NON_NULL" && ofType) {
 
@@ -801,7 +801,7 @@ class App extends Component {
 
     }
 
-    // console.log("whereInputTypeName 2", whereInputTypeName);
+
 
     if (!whereInputTypeName) {
       return null;

@@ -335,7 +335,7 @@ class MainPage extends Component {
             kind,
           } = Type;
 
-          // console.log("addFilter item", value, inputField, Type, isList, isNonNull);
+
 
           let newFilters = { ...filters }
 

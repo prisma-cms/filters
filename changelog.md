@@ -1,3 +1,4 @@
+1.5.0
 =================================
 - Added Boolean filter
 - Added Number filter
