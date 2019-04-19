@@ -1,5 +1,7 @@
 =================================
 - Added Boolean filter
+- Added Number filter
+- Added ENUM filter
 
 1.4.2
 =================================

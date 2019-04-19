@@ -14,6 +14,10 @@ import AddFilter from './dev/Renderer/pages/MainPage/AddFilter';
 import { FormControlLabel } from 'material-ui';
 import { Switch } from 'material-ui';
 import { Button } from 'material-ui';
+import { FormControl } from 'material-ui';
+import { Select } from 'material-ui';
+import { MenuItem } from 'material-ui';
+import { InputLabel } from 'material-ui';
 
 export {
   ContextProvider,
@@ -316,6 +320,7 @@ class App extends Component {
 
         const {
           type: {
+            kind: typeKind,
             name: typeName,
           },
         } = fieldByName;
@@ -323,103 +328,198 @@ class App extends Component {
         let field;
 
 
-        switch (typeName) {
+        switch (typeKind) {
 
-          case "Boolean":
+          case "SCALAR":
 
-            console.log("value", value);
+            switch (typeName) {
 
-            if (typeof value === "boolean") {
+              case "Boolean":
 
-              field = <FormControlLabel
-                control={
-                  <Switch
-                    name={name}
-                    checked={value === true}
-                    color="primary"
-                    onChange={(event, checked) => {
+                console.log("value", value);
 
-                      console.log("checked", checked);
+                if (typeof value === "boolean") {
 
-                      // const {
-                      //   name,
-                      //   value,
-                      // } = event.target;
+                  field = <FormControlLabel
+                    control={
+                      <Switch
+                        name={name}
+                        checked={value === true}
+                        color="primary"
+                        onChange={(event, checked) => {
 
-                      setFilters(Object.assign({ ...filters }, {
-                        [name]: checked,
-                      }));
+                          console.log("checked", checked);
 
-                    }}
-                  // {...other}
+                          // const {
+                          //   name,
+                          //   value,
+                          // } = event.target;
+
+                          setFilters(Object.assign({ ...filters }, {
+                            [name]: checked,
+                          }));
+
+                        }}
+                      // {...other}
+                      />
+                    }
+                    label={name}
+                  // fullWidth
                   />
+
                 }
-                label={name}
-              // fullWidth
-              />
+                else {
+                  field = <Grid
+                    container
+                    spacing={8}
+                  >
+                    <Grid
+                      item
+                    >
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={event => {
+                          setFilters(Object.assign({ ...filters }, {
+                            [name]: true,
+                          }));
+                        }}
+                      >
+                        True
+                            </Button>
+                    </Grid>
+                    <Grid
+                      item
+                    >
+                      <Button
+                        size="small"
+                        color="secondary"
+                        onClick={event => {
+                          setFilters(Object.assign({ ...filters }, {
+                            [name]: false,
+                          }));
+                        }}
+                      >
+                        False
+                            </Button>
+                    </Grid>
+                  </Grid>
+                }
+
+
+                break;
+
+
+              case "Int":
+              case "Float":
+
+                field = <TextField
+                  name={name}
+                  label={name}
+                  value={value || ""}
+                  type="number"
+                  onChange={event => {
+
+                    const {
+                      name,
+                      value,
+                    } = event.target;
+
+                    setFilters(Object.assign({ ...filters }, {
+                      [name]: Number(value),
+                    }));
+
+                  }}
+                />
+
+                break;
+
+              default:
+
+                field = <TextField
+                  name={name}
+                  label={name}
+                  value={value || ""}
+                  onChange={event => {
+
+                    const {
+                      name,
+                      value,
+                    } = event.target;
+
+                    setFilters(Object.assign({ ...filters }, {
+                      [name]: value,
+                    }));
+
+                  }}
+                />
+
 
             }
-            else {
-              field = <Grid
-                container
-                spacing={8}
-              >
-                <Grid
-                  item
-                >
-                  <Button
-                    size="small"
-                    color="primary"
-                    onClick={event => {
-                      setFilters(Object.assign({ ...filters }, {
-                        [name]: true,
-                      }));
-                    }}
-                  >
-                    True
-                  </Button>
-                </Grid>
-                <Grid
-                  item
-                >
-                  <Button
-                    size="small"
-                    color="secondary"
-                    onClick={event => {
-                      setFilters(Object.assign({ ...filters }, {
-                        [name]: false,
-                      }));
-                    }}
-                  >
-                    False
-                  </Button>
-                </Grid>
-              </Grid>
-            }
-
 
             break;
 
-          default:
 
-            field = <TextField
-              name={name}
-              label={name}
-              value={value || ""}
-              onChange={event => {
+          case "ENUM":
+
+            {
+
+
+              const Type = this.getSchemaType(n => n.name === typeName && n.kind === typeKind);
+
+              if (Type) {
+
 
                 const {
-                  name,
-                  value,
-                } = event.target;
+                  enumValues,
+                } = Type;
 
-                setFilters(Object.assign({ ...filters }, {
-                  [name]: value,
-                }));
+                field = <FormControl
+                  fullWidth
+                  style={{
+                    minWidth: 150,
+                  }}
+                >
+                  <InputLabel>{name}</InputLabel>
+                  <Select
+                    value={value || ""}
+                    onChange={event => {
 
-              }}
-            />
+                      const {
+                        name,
+                        value,
+                      } = event.target;
 
+                      setFilters(Object.assign({ ...filters }, {
+                        [name]: value,
+                      }));
+
+                    }}
+                    inputProps={{
+                      name,
+                      // id: 'age-simple',
+                    }}
+                  >
+                    {enumValues.map(n => {
+
+                      const {
+                        name: fieldName,
+                      } = n;
+
+                      return <MenuItem
+                        key={fieldName}
+                        value={fieldName}
+                      >
+                        {fieldName}
+                      </MenuItem>
+                    })}
+                  </Select>
+                </FormControl>;
+
+              }
+            }
+
+            break;
 
         }
 
@@ -548,6 +648,25 @@ class App extends Component {
       return name && ["AND", "OR", "NOT"].indexOf(name) === -1 && !/(\_in)$/.test(name) ? true : false
 
     }) : [];
+  }
+
+
+
+  getSchemaType(filter) {
+
+    const {
+      schema,
+    } = this.context;
+
+
+    const {
+      types,
+    } = schema;
+
+    const Field = types.find(filter);
+
+    return Field;
+
   }
 
 
