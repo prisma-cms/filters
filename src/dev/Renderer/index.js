@@ -8,8 +8,15 @@ import App, {
 
 import { Renderer as PrismaCmsRenderer } from '@prisma-cms/front'
 
+import {
+  ContextProvider as FrontEditorContextProvider,
+  SubscriptionProvider as FrontEditorSubscriptionProvider,
+  // FrontEditorRoot,
+} from "@prisma-cms/front-editor"
+
 import MainMenu from './MainMenu';
 
+import RootPage from "./pages/Root";
 import MainPage from "./pages/MainPage";
 import UserPage from './pages/User';
 
@@ -32,11 +39,6 @@ class DevRenderer extends PrismaCmsRenderer {
     let routes = super.getRoutes();
 
     return [
-      {
-        exact: true,
-        path: "/",
-        component: MainPage,
-      },
       {
         exact: true,
         path: "/users",
@@ -64,6 +66,11 @@ class DevRenderer extends PrismaCmsRenderer {
           />
         }
       },
+      {
+        exact: false,
+        path: "/",
+        component: RootPage,
+      },
       // {
       //   path: "*",
       //   render: props => this.renderOtherPages(props),
@@ -82,14 +89,18 @@ class DevRenderer extends PrismaCmsRenderer {
 
   renderWrapper() {
 
-    return <ContextProvider>
-      <SubscriptionProvider>
-        <Fragment>
-          {this.renderMenu()}
-          {super.renderWrapper()}
-        </Fragment>
-      </SubscriptionProvider>
-    </ContextProvider>;
+    return <FrontEditorContextProvider>
+      <FrontEditorSubscriptionProvider>
+        <ContextProvider>
+          <SubscriptionProvider>
+            <Fragment>
+              {this.renderMenu()}
+              {super.renderWrapper()}
+            </Fragment>
+          </SubscriptionProvider>
+        </ContextProvider>
+      </FrontEditorSubscriptionProvider>
+    </FrontEditorContextProvider>;
 
   }
 

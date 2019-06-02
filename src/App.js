@@ -253,18 +253,16 @@ class App extends Component {
       else if (value && value instanceof Object) {
 
 
-        const inputType = inputFields.find(n => n.name === name);
+        const inputType = inputFields.find(n => n && n.name === name);
 
 
 
         const {
-          type: {
-            name: whereTypeName,
-          },
-        } = inputType;
+          name: whereTypeName,
+        } = inputType && inputType.type || {};
 
 
-        const fieldInputFields = this.getInputFields(whereTypeName);
+        const fieldInputFields = whereTypeName ? this.getInputFields(whereTypeName) : [];
 
 
         const field = this.renderFilters(

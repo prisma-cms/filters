@@ -1,3 +1,8 @@
+1.6.0
+=================================
+- Added @prisma-cms/front-editor
+- Fix Filters
+
 1.5.0
 =================================
 - Added Boolean filter
