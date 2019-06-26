@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, IconButton } from 'material-ui';
 
-import AddIcon from "material-ui-icons/AddCircleOutline";
-import { FilterList } from 'material-ui-icons';
+// import AddIcon from "material-ui-icons/AddCircleOutline";
+import FilterList from 'material-ui-icons/FilterList';
 
 class AddFilter extends Component {
 

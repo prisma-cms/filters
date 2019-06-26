@@ -5,8 +5,8 @@ import "./styles/less/styles.css";
 
 import Context from '@prisma-cms/context';
 
-import SubscriptionProvider from "./components/SubscriptionProvider";
-import ContextProvider from "./components/ContextProvider";
+// import SubscriptionProvider from "./components/SubscriptionProvider";
+// import ContextProvider from "./components/ContextProvider";
 import { Typography, IconButton } from 'material-ui';
 import CloseIcon from "material-ui-icons/Close";
 import { TextField } from 'material-ui';
@@ -19,10 +19,10 @@ import { Select } from 'material-ui';
 import { MenuItem } from 'material-ui';
 import { InputLabel } from 'material-ui';
 
-export {
-  ContextProvider,
-  SubscriptionProvider,
-}
+// export {
+//   ContextProvider,
+//   SubscriptionProvider,
+// }
 
 
 class App extends Component {

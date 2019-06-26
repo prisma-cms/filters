@@ -2,8 +2,8 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from "prop-types";
 
 import App, {
-  ContextProvider,
-  SubscriptionProvider,
+  // ContextProvider,
+  // SubscriptionProvider,
 } from "../../App";
 
 import { Renderer as PrismaCmsRenderer } from '@prisma-cms/front'
@@ -91,14 +91,10 @@ class DevRenderer extends PrismaCmsRenderer {
 
     return <FrontEditorContextProvider>
       <FrontEditorSubscriptionProvider>
-        <ContextProvider>
-          <SubscriptionProvider>
-            <Fragment>
-              {this.renderMenu()}
-              {super.renderWrapper()}
-            </Fragment>
-          </SubscriptionProvider>
-        </ContextProvider>
+        <Fragment>
+          {this.renderMenu()}
+          {super.renderWrapper()}
+        </Fragment>
       </FrontEditorSubscriptionProvider>
     </FrontEditorContextProvider>;
 

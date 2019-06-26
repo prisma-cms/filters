@@ -6,11 +6,11 @@ import Context from "@prisma-cms/context";
 // import Filter from "./Filter";
 
 import Users from "./Users";
-import { TextField, IconButton } from 'material-ui';
+// import { TextField, IconButton } from 'material-ui';
 
-import CloseIcon from "material-ui-icons/Close";
-import { Typography } from 'material-ui';
-import AddFilter from './AddFilter';
+// import CloseIcon from "material-ui-icons/Close";
+// import { Typography } from 'material-ui';
+// import AddFilter from './AddFilter';
 import App from '../../../../App';
 
 class MainPage extends Component {
