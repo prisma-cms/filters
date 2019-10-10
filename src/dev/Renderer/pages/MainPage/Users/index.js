@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Context from "@prisma-cms/context";
-import { graphql, Query } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
 
@@ -13,17 +13,6 @@ class Users extends Component {
   }
 
   static contextType = Context;
-
-  // componentWillMount() {
-
-  //   const {
-  //     query: {
-
-  //     },
-  //   } = this.context;
-
-  //   super.componentWillMount && super.componentWillMount()
-  // }
 
 
   render() {
@@ -38,7 +27,7 @@ class Users extends Component {
       UserLink,
     } = this.context;
 
-    return objects && <table
+    return objects ? <table
       border="1"
       cellSpacing={2}
     >
@@ -50,16 +39,11 @@ class Users extends Component {
           <th>
             username
           </th>
-          {/* <th>
-            fullname
-          </th> */}
         </tr>
         {objects.map(n => {
 
           const {
             id,
-            username,
-            fullname,
           } = n;
 
           return <tr
@@ -76,7 +60,7 @@ class Users extends Component {
           </tr>
         })}
       </tbody>
-    </table> || null
+    </table> : null
 
   }
 }
@@ -97,10 +81,25 @@ class UsersConnector extends Component {
   componentWillMount() {
 
     const {
-      query: {
-        users,
-      },
-    } = this.context;
+      users = `query users (
+        $first: Int = 10
+        $skip: Int
+        $orderBy: UserOrderByInput
+        $where:UserWhereInput
+      ){
+        objects: users(
+          first: $first
+          skip:$skip
+          orderBy: $orderBy
+          where: $where
+        ){
+          id
+          username
+          fullname
+          image
+        }
+      }`,
+    } = this.context.query || {};
 
     this.Renderer = graphql(gql(users))(Users);
 

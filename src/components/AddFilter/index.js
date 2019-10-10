@@ -1,22 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, IconButton } from 'material-ui';
+import IconButton from 'material-ui/IconButton';
 
-// import AddIcon from "material-ui-icons/AddCircleOutline";
 import FilterList from 'material-ui-icons/FilterList';
 
 class AddFilter extends Component {
 
-
   static propTypes = {
     inputFields: PropTypes.array.isRequired,
-    // opened: PropTypes.bool.isRequired,
   };
-
-
-  static defaultProps = {
-    // opened: false,
-  }
 
 
   state = {
@@ -27,7 +19,6 @@ class AddFilter extends Component {
 
     const {
       inputFields,
-      // opened,
       onChange,
       ...other
     } = this.props;
@@ -38,14 +29,12 @@ class AddFilter extends Component {
 
     let content = null;
 
-
     if (opened) {
 
       content = <select
         {...other}
         onChange={event => {
           onChange(event);
-
           this.setState({
             opened: false,
           });
@@ -58,12 +47,9 @@ class AddFilter extends Component {
         </option>
 
         {inputFields.map(n => {
-
           const {
             name,
-            type,
           } = n;
-
 
           return <option
             key={name}
@@ -77,19 +63,6 @@ class AddFilter extends Component {
     }
     else {
 
-      // content = <Button
-      //   size="small"
-      //   onClick={event => {
-      //     this.setState({
-      //       opened: true,
-      //     });
-      //   }}
-      // >
-      //   <AddIcon
-
-      //   /> Add filter
-      // </Button>
-
       content = <IconButton
         onClick={event => {
           this.setState({
@@ -100,8 +73,6 @@ class AddFilter extends Component {
         <FilterList />
       </IconButton>
     }
-
-
 
     return content;
   }

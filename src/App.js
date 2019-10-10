@@ -1,31 +1,27 @@
-import React, { Component, Fragment } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 import "./styles/less/styles.css";
 
 import Context from '@prisma-cms/context';
 
-// import SubscriptionProvider from "./components/SubscriptionProvider";
-// import ContextProvider from "./components/ContextProvider";
-import { Typography, IconButton } from 'material-ui';
+import Typography from 'material-ui/Typography';
+import IconButton from 'material-ui/IconButton';
+import TextField from 'material-ui/TextField';
+import FormControlLabel from 'material-ui/Form/FormControlLabel';
+import Switch from 'material-ui/Switch';
+import Button from 'material-ui/Button';
+import FormControl from 'material-ui/Form/FormControl';
+import Select from 'material-ui/Select';
+import MenuItem from 'material-ui/Menu/MenuItem';
+import InputLabel from 'material-ui/Input/InputLabel';
+
 import CloseIcon from "material-ui-icons/Close";
-import { TextField } from 'material-ui';
-import AddFilter from './dev/Renderer/pages/MainPage/AddFilter';
-import { FormControlLabel } from 'material-ui';
-import { Switch } from 'material-ui';
-import { Button } from 'material-ui';
-import { FormControl } from 'material-ui';
-import { Select } from 'material-ui';
-import { MenuItem } from 'material-ui';
-import { InputLabel } from 'material-ui';
 
-// export {
-//   ContextProvider,
-//   SubscriptionProvider,
-// }
+import AddFilter from './components/AddFilter';
 
 
-class App extends Component {
+class App extends PureComponent {
 
   static contextType = Context;
 
@@ -34,11 +30,12 @@ class App extends Component {
     queryName: PropTypes.string.isRequired,
     whereType: PropTypes.string.isRequired,
     setFilters: PropTypes.func.isRequired,
+    showFiltersJson: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
-    // queryName: "users",
     whereType: "where",
+    showFiltersJson: false,
   };
 
 
@@ -60,16 +57,12 @@ class App extends Component {
    */
   setFilters = (filters) => {
 
-
-
     const {
       setFilters,
     } = this.props;
 
     return setFilters(filters);
   }
-
-
 
 
   renderInputBlock(field, name, key, filters, setFilters, deleteItem, title) {
@@ -138,13 +131,11 @@ class App extends Component {
 
         return this.getType(ofType, true, isNonNull);
 
-        break;
-
       case "NON_NULL":
 
         return this.getType(ofType, isList, true);
 
-        break;
+      default: ;
     }
 
     return {
@@ -186,7 +177,7 @@ class App extends Component {
 
     names.map((name, index) => {
 
-      const newName = name;
+      // const newName = name;
 
       const value = values[index];
 
@@ -239,6 +230,7 @@ class App extends Component {
             }
           ));
 
+          return null;
         });
 
 
@@ -259,7 +251,7 @@ class App extends Component {
 
         const {
           name: whereTypeName,
-        } = inputType && inputType.type || {};
+        } = (inputType && inputType.type) || {};
 
 
         const fieldInputFields = whereTypeName ? this.getInputFields(whereTypeName) : [];
@@ -581,6 +573,7 @@ class App extends Component {
         inputs.push(input);
       }
 
+      return null;
     });
 
     // return inputs;
@@ -692,7 +685,7 @@ class App extends Component {
         name,
       } = n || {};
 
-      return name && ["AND", "OR", "NOT"].indexOf(name) === -1 && !/(\_in)$/.test(name) ? true : false
+      return name && ["AND", "OR", "NOT"].indexOf(name) === -1 && !/(_in)$/.test(name) ? true : false
 
     }) : [];
   }
@@ -727,7 +720,8 @@ class App extends Component {
     const {
       filters,
       queryName,
-      whereType,
+      showFiltersJson,
+      // whereType,
     } = this.props;
 
 
@@ -752,8 +746,6 @@ class App extends Component {
     const queryField = fields.find(n => n.name === queryName);
 
 
-
-
     if (!queryField) {
       return null;
     }
@@ -770,7 +762,6 @@ class App extends Component {
     const whereArg = args.find(n => n.name === "where");
 
 
-
     if (!whereArg) {
       return null;
     }
@@ -782,10 +773,6 @@ class App extends Component {
         ofType,
       },
     } = whereArg;
-
-
-
-
 
 
 
@@ -811,8 +798,7 @@ class App extends Component {
 
     let filtersJson;
 
-    if (filters && Object.keys(filters).length) {
-
+    if (showFiltersJson && filters && Object.keys(filters).length) {
       filtersJson = JSON.stringify(filters, null, 2);
     }
 

@@ -1,24 +1,33 @@
-import React, { Component, Fragment } from 'react';
+import React from 'react';
 import PropTypes from "prop-types";
 
-import App, {
-  // ContextProvider,
-  // SubscriptionProvider,
-} from "../../App";
+import App from "../../App";
 
 import { Renderer as PrismaCmsRenderer } from '@prisma-cms/front'
 
-import {
-  ContextProvider as FrontEditorContextProvider,
-  SubscriptionProvider as FrontEditorSubscriptionProvider,
-  // FrontEditorRoot,
-} from "@prisma-cms/front-editor"
-
 import MainMenu from './MainMenu';
+import withStyles from 'material-ui/styles/withStyles';
+import DevMainPage from './pages/MainPage';
 
-import RootPage from "./pages/Root";
-import MainPage from "./pages/MainPage";
-import UserPage from './pages/User';
+
+export const styles = {
+
+  root: {
+    // border: "1px solid blue",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+
+    "& #Renderer--body": {
+      // border: "1px solid green",
+      flex: 1,
+      overflow: "auto",
+      display: "flex",
+      flexDirection: "column",
+    },
+  },
+}
+
 
 class DevRenderer extends PrismaCmsRenderer {
 
@@ -40,36 +49,19 @@ class DevRenderer extends PrismaCmsRenderer {
 
     return [
       {
-        exact: true,
-        path: "/users",
-        component: MainPage,
-      },
-      {
-        exact: true,
-        path: "/users/:userId",
-        render: (props) => {
-          const {
-            params,
-          } = props.match;
-
-          const {
-            userId,
-          } = params || {};
-
-          return <UserPage
-            key={userId}
-            userId={userId}
-            // where={{
-            //   id: userId,
-            // }}
-            {...props}
-          />
-        }
-      },
-      {
         exact: false,
         path: "/",
-        component: RootPage,
+        // component: DevMainPage,
+        render: props => {
+          // console.log("props", { ...props });
+          return <DevMainPage
+          >
+          </DevMainPage>;
+        }
+        // render: props => {
+        //   console.log("props", { ...props });
+        //   return null;
+        // }
       },
       // {
       //   path: "*",
@@ -87,33 +79,36 @@ class DevRenderer extends PrismaCmsRenderer {
   }
 
 
-  renderWrapper() {
-
-    return <FrontEditorContextProvider>
-      <FrontEditorSubscriptionProvider>
-        <Fragment>
-          {this.renderMenu()}
-          {super.renderWrapper()}
-        </Fragment>
-      </FrontEditorSubscriptionProvider>
-    </FrontEditorContextProvider>;
-
-  }
-
-
   render() {
 
     const {
       pure,
+      classes,
       ...other
     } = this.props;
 
     return pure ? <App
       {...other}
-    /> : super.render()
+    /> :
+      <div
+        className={classes.root}
+      >
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+            body, html, #root{
+              height: 100%;
+            }
+          `,
+          }}
+        />
+        {super.render()}
+      </div>;
 
   }
 
 }
 
-export default DevRenderer;
+export default withStyles(styles)(props => <DevRenderer
+  {...props}
+/>);

@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 
 import Context from "@prisma-cms/context";
 
-// import Filter from "./Filter";
-
 import Users from "./Users";
-import { TextField, IconButton } from 'material-ui';
+
+import Typography from 'material-ui/Typography';
+import TextField from 'material-ui/TextField';
+import IconButton from 'material-ui/IconButton';
 
 import CloseIcon from "material-ui-icons/Close";
-import { Typography } from 'material-ui';
 import AddFilter from './AddFilter';
 
 class MainPage extends Component {

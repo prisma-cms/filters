@@ -1,3 +1,8 @@
+1.7.0
+=================================
+- Code refactoring
+- Added showFiltersJson property
+
 1.6.1
 =================================
 - Fix material-ui-icons
