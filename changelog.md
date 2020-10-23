@@ -1,3 +1,8 @@
+1.8.0
+=================================
+- Remove styles due styled-components compatibility
+  https://err.sh/next.js/css-npm
+
 1.7.0
 =================================
 - Code refactoring

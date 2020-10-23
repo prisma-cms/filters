@@ -1,8 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import "./styles/less/styles.css";
-
 import Context from '@prisma-cms/context';
 
 import Typography from 'material-ui/Typography';
